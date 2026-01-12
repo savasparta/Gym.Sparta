@@ -1,9 +1,10 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="de">
 <head>
   <meta charset="UTF-8">
   <title>Gym-Sparta</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
   <style>
     body {
       background: #000;
@@ -12,79 +13,101 @@
       text-align: center;
       padding: 25px;
     }
-    h1 { color: gold; }
+
+    h1 {
+      color: gold;
+      margin-bottom: 10px;
+    }
+
+    h2 {
+      margin-top: 40px;
+      color: gold;
+    }
+
+    /* Spartan Card */
     .card {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+
       border: 2px solid gold;
-      border-radius: 14px;
-      padding: 16px;
+      border-radius: 16px;
+      padding: 18px;
       margin: 14px 0;
+
+      font-size: 18px;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+
+    /* Checkbox unsichtbar */
+    .card input {
+      position: absolute;
+      opacity: 0;
+    }
+
+    /* Aktiv = Gold */
+    .card:has(input:checked) {
+      background: gold;
+      color: black;
+      font-weight: bold;
+    }
+
+    .motivation {
+      margin: 25px 0;
+      font-size: 16px;
     }
   </style>
 </head>
+
 <body>
 
-<h1>🏛️ GYM-SPARTA 🏛️</h1>
-<p><strong>Auuu!</strong> Zieh durch, Malaka 💪</p>
+  <h1>🏛️ GYM-SPARTA 🏛️</h1>
+  <p><strong>Auuu!</strong> Zieh durch, Malaka 💪</p>
 
-<label class="card">
-  <input type="checkbox">
-  🥣 Frühstück – sauber essen
-</label>
+  <!-- Spartan Daily Flow -->
+  <label class="card">
+    <input type="checkbox">
+    🥣 Frühstück – sauber essen
+  </label>
 
-<label class="card">
-  <input type="checkbox">
-  🍗 Mittag – Protein rein
-</label>
+  <label class="card">
+    <input type="checkbox">
+    🍗 Mittag – Protein rein
+  </label>
 
-<label class="card">
-  <input type="checkbox">
-  🍌 Pre-Workout – Fokus
-</label>
+  <label class="card">
+    <input type="checkbox">
+    🍌 Pre-Workout – Fokus
+  </label>
 
-<label class="card">
-  <input type="checkbox">
-  🏋️ Training – keine Ausreden
-</label>
+  <label class="card">
+    <input type="checkbox">
+    🏋️ Training – keine Ausreden
+  </label>
 
-<label class="card">
-  <input type="checkbox">
-  🥛 Post-Workout – Regeneration
-</label>
+  <label class="card">
+    <input type="checkbox">
+    🥛 Post-Workout – Regeneration
+  </label>
 
-<label class="card">
-  <input type="checkbox">
-  🌙 500g Quark + Honig / Nüsse / Banane
-</label>
+  <label class="card">
+    <input type="checkbox">
+    🌙 500g Quark + Honig / Nüsse / Banane
+  </label>
 
-<p>🔥 Ziel: 200–250g Protein pro Tag 🔥</p>
-<p>Malaka… weiter so 💪 Auuu!</p>
-<h2>🔥 Daily Spartan Checklist</h2>
+  <div class="motivation">
+    🔥 Ziel: 200–250g Protein pro Tag 🔥<br>
+    Malaka… weiter so 💪 Auuu!
+  </div>
 
-<label>
-  <input type="checkbox"> Frühstück – sauber essen 🥣
-</label><br>
+  <h2>⚔️ Sparta Mentalität</h2>
+  <p>
+    Keine Motivation.<br>
+    Keine Ausreden.<br>
+    <strong>Disziplin.</strong>
+  </p>
 
-<label>
-  <input type="checkbox"> Mittag – Protein rein 🍗
-</label><br>
-
-<label>
-  <input type="checkbox"> Pre-Workout – Fokus 💥
-</label><br>
-
-<label>
-  <input type="checkbox"> Post-Workout – Eiweiß 💪
-</label><br>
-
-<label>
-  <input type="checkbox"> Vor dem Schlafen – Quark 500g 🥛
-</label>
 </body>
 </html>
-<html lang="de">
-
-  <body>
-  <header>...</header>
-  <main>...</main>
-  <footer>...</footer>
-</body>
