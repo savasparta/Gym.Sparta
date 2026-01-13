@@ -49,6 +49,12 @@ border:none;
 border-radius:12px;
 font-size:17px;
 font-weight:bold;
+cursor:pointer;
+}
+
+button.danger{
+background:var(--danger);
+color:#fff;
 }
 
 input,select,textarea{
@@ -66,6 +72,28 @@ font-size:16px;
 
 .status-ok{color:#6fff95;font-weight:bold;}
 .status-bad{color:#ff6f6f;font-weight:bold;}
+
+.week{
+display:grid;
+grid-template-columns:repeat(7,1fr);
+gap:6px;
+margin-top:10px;
+}
+
+.day{
+border:1px solid var(--gold);
+border-radius:8px;
+padding:10px;
+font-size:12px;
+cursor:pointer;
+text-align:center;
+}
+
+.day.done{
+background:var(--gold);
+color:#000;
+font-weight:bold;
+}
 
 .footer{color:var(--gold);margin:30px 0;font-weight:bold;}
 </style>
@@ -118,6 +146,25 @@ XP: <span id="xp">0</span><br>
 <div id="badgesBox"></div>
 </div>
 
+<!-- 🧠 BEAST MODE -->
+<div class="card">
+<h3>🔥 BEAST MODE – 30 TAGE</h3>
+Status: <span id="beastStatus">Nicht aktiv</span><br><br>
+<button onclick="startBeast()">Beast Mode starten</button>
+<div id="beastBox" class="hidden">
+<label><input type="checkbox" id="bmTrain"> Training</label><br>
+<label><input type="checkbox" id="bmFood"> Ernährung</label><br>
+<label><input type="checkbox" id="bmSleep"> Schlaf</label><br>
+<button onclick="completeBeastDay()">Tag abschließen</button>
+</div>
+</div>
+
+<!-- 📅 WOCHEN TRACKER -->
+<div class="card">
+<h3>📅 WOCHEN-TRACKER</h3>
+<div class="week" id="week"></div>
+</div>
+
 <div class="card">
 <h3>🏋️ TRAININGSPLAN</h3>
 <select id="planSelect" onchange="savePlan()">
@@ -141,7 +188,7 @@ XP: <span id="xp">0</span><br>
 
 <div class="card">
 <h3>📓 LOGBUCH</h3>
-<textarea id="postText"></textarea>
+<textarea id="postText" placeholder="Was hast du heute getan?"></textarea>
 <button onclick="addPost()">Speichern</button>
 <div id="feed"></div>
 </div>
@@ -149,7 +196,7 @@ XP: <span id="xp">0</span><br>
 <button class="danger" onclick="resetAll()">⚠️ RESET</button>
 </div>
 
-<p class="footer">GYM-SPARTA · OFFLINE · OPTION B BUILD 🏛️</p>
+<p class="footer">GYM-SPARTA · OFFLINE · MASTER BUILD 🏛️</p>
 
 <script>
 const MASTER_CODE="SPARTA-ELITE";
@@ -163,6 +210,8 @@ let xpHistory=JSON.parse(localStorage.getItem("xpHistory"))||[];
 let systemHistory=JSON.parse(localStorage.getItem("systemHistory"))||[];
 let lastAction=localStorage.getItem("lastAction")||"–";
 let lastDay=localStorage.getItem("lastDay")||"–";
+let weekDays=JSON.parse(localStorage.getItem("weekDays"))||[0,0,0,0,0,0,0];
+let beastDay=+localStorage.getItem("beastDay")||0;
 
 function deviceID(){
 if(!localStorage.getItem(DEVICE_ID_KEY))
@@ -203,7 +252,7 @@ localStorage.setItem("streak",streak);
 
 function logXP(amount,reason){
 xp+=amount;
-xpHistory.unshift(new Date().toLocaleDateString()+" · "+reason+" ("+amount+" XP)");
+xpHistory.unshift(new Date().toLocaleString()+" · "+reason+" ("+amount+" XP)");
 localStorage.setItem("xpHistory",JSON.stringify(xpHistory));
 lastAction=reason;
 localStorage.setItem("lastAction",reason);
@@ -235,23 +284,57 @@ logSystem("Ernährung gesetzt");
 renderAll();
 }
 
+function startBeast(){
+if(beastDay>0) return;
+beastDay=1;
+localStorage.setItem("beastDay",beastDay);
+logSystem("Beast Mode gestartet");
+renderAll();
+}
+
+function completeBeastDay(){
+if(!(bmTrain.checked && bmFood.checked && bmSleep.checked)) return alert("Alles abhaken!");
+logXP(25,"Beast Mode Tag "+beastDay);
+beastDay++;
+localStorage.setItem("beastDay",beastDay);
+bmTrain.checked=bmFood.checked=bmSleep.checked=false;
+renderAll();
+}
+
+function renderWeek(){
+week.innerHTML="";
+["Mo","Di","Mi","Do","Fr","Sa","So"].forEach((d,i)=>{
+let el=document.createElement("div");
+el.className="day"+(weekDays[i]?" done":"");
+el.textContent=d;
+el.onclick=()=>{
+weekDays[i]=weekDays[i]?0:1;
+logXP(10,"Training "+d);
+localStorage.setItem("weekDays",JSON.stringify(weekDays));
+renderAll();
+};
+week.appendChild(el);
+});
+}
+
 function checkBadges(){
 if(xp>=500 && !badges.includes("Krieger")) badges.push("Krieger");
 if(streak>=7 && !badges.includes("Blutwoche")) badges.push("Blutwoche");
-if(Math.floor(xp/100)+1>=10 && !badges.includes("Veteran")) badges.push("Veteran");
-if(posts.length>=25 && !badges.includes("Schreiber")) badges.push("Schreiber");
+if(beastDay>=30 && !badges.includes("Beast")) badges.push("Beast");
 localStorage.setItem("badges",JSON.stringify(badges));
 }
 
 function renderAll(){
 level.textContent=Math.floor(xp/100)+1;
-xpSpan=document.getElementById("xp");
-xpSpan.textContent=xp;
+xp.textContent=xp;
 document.getElementById("streak").textContent=streak;
 document.getElementById("lastAction").textContent=lastAction;
 document.getElementById("activePlan").textContent=localStorage.getItem("activePlan")||"–";
 document.getElementById("activeFood").textContent=localStorage.getItem("activeFood")||"–";
 document.getElementById("lastDay").textContent=lastDay;
+document.getElementById("beastStatus").textContent=beastDay>0?"Tag "+beastDay+"/30":"Nicht aktiv";
+document.getElementById("beastBox").classList.toggle("hidden",beastDay===0);
+renderWeek();
 renderFeed();
 renderBadges();
 renderXPLog();
