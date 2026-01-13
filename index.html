@@ -2,7 +2,7 @@
 <html lang="de">
 <head>
 <meta charset="UTF-8">
-<title>GYM SPARTA</title>
+<title>GYM SPARTA – IMPERIUM</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <link rel="apple-touch-icon" href="logo.png.PNG">
@@ -10,174 +10,248 @@
 <meta name="theme-color" content="#000000">
 
 <style>
-body{background:#000;color:#fff;font-family:Arial,sans-serif;padding:20px;text-align:center}
-body.beast{background:#3b0000}
+body{
+  background:#000;color:#fff;font-family:Arial,sans-serif;
+  padding:20px;text-align:center
+}
+body.beast{background:#2a0000}
 h1,h2,h3{color:gold}
 .logo{max-width:260px;width:80%;margin:20px auto;display:block}
-.card{border:2px solid gold;border-radius:14px;padding:16px;margin:14px 0;text-align:left}
-button{width:100%;padding:14px;background:gold;border:none;border-radius:12px;font-size:18px;font-weight:bold;margin-top:10px}
+.card{
+  border:2px solid gold;border-radius:14px;
+  padding:16px;margin:14px 0;text-align:left
+}
+button{
+  width:100%;padding:14px;background:gold;color:#000;
+  border:none;border-radius:12px;font-size:18px;
+  font-weight:bold;margin-top:10px
+}
 input[type=checkbox]{transform:scale(1.4);margin-right:10px}
 .hidden{display:none}
-.progress-box{border:2px solid gold;border-radius:12px;padding:10px;margin:20px 0}
-.progress-bar{height:20px;background:gold;width:0%;border-radius:10px}
-.badge{border:2px solid gold;border-radius:10px;padding:10px;margin:6px 0;text-align:center}
-.calendar{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;margin-top:10px}
-.day{border:1px solid gold;border-radius:8px;padding:8px;font-size:12px}
+.progress-box{
+  border:2px solid gold;border-radius:12px;
+  padding:10px;margin:20px 0
+}
+.progress-bar{
+  height:20px;background:gold;width:0%;
+  border-radius:10px
+}
+.badge{
+  border:2px solid gold;border-radius:10px;
+  padding:10px;margin:6px 0;text-align:center
+}
+.calendar{
+  display:grid;grid-template-columns:repeat(7,1fr);
+  gap:6px;margin-top:10px
+}
+.day{
+  border:1px solid gold;border-radius:8px;
+  padding:8px;font-size:12px
+}
 .day.done{background:gold;color:#000}
-.footer{color:gold;margin-top:30px;font-weight:bold}
 .quote{font-style:italic;color:gold;margin:15px 0}
+.footer{color:gold;margin-top:30px;font-weight:bold}
+input,select{
+  width:100%;padding:10px;border-radius:8px;
+  border:none;margin-top:6px
+}
 </style>
 </head>
 
 <body>
 
 <img src="logo.png.PNG" class="logo">
-<h1>🏛️ GYM SPARTA 🏛️</h1>
+<h1>🏛️ GYM SPARTA – IMPERIUM 🏛️</h1>
 
 <div class="quote" id="quote"></div>
 
-<div class="card" id="oathBox">
-<strong>⚔️ Spartan Eid</strong><br><br>
-Ich trainiere – auch wenn es schwer ist.<br>
-Ich breche nicht.<br><br>
-<button onclick="acceptOath()">ICH SCHWÖRE</button>
+<!-- PROFIL -->
+<div class="card" id="profileBox">
+<strong>👤 Spartan Profil</strong><br><br>
+Name:
+<input id="nameInput" placeholder="Dein Name">
+Titel:
+<select id="titleInput">
+<option>Rekrut</option>
+<option>Krieger</option>
+<option>Elite</option>
+<option>Legende</option>
+<option>Imperator</option>
+</select>
+<button onclick="saveProfile()">PROFIL SPEICHERN</button>
 </div>
 
 <div id="app" class="hidden">
 
-<button onclick="toggleBeast()" id="beastBtn">🔥 BEAST MODE</button>
+<button onclick="toggleBeast()" id="beastBtn">🔥 IMPERATOR MODE</button>
 
 <h2>🔥 Daily Ritual</h2>
 <label class="card"><input type="checkbox" class="task"> Morgen-Ritual</label>
 <label class="card"><input type="checkbox" class="task"> Training erledigt</label>
-<label class="card"><input type="checkbox" class="task"> Protein erreicht</label>
+<label class="card"><input type="checkbox" class="task"> Ernährung eingehalten</label>
 <label class="card"><input type="checkbox" class="task"> Abend-Ritual</label>
 
 <div class="progress-box">
 <div class="progress-bar" id="progress"></div>
 </div>
 
-<div><strong>🏅 Rang:</strong> <span id="rank"></span></div>
+<div><strong>👑 Rang:</strong> <span id="rank"></span></div>
 <div><strong>🔥 Streak:</strong> <span id="streak">0</span> Tage</div>
+<div><strong>⚔️ Imperium-Punkte:</strong> <span id="ip">0</span></div>
+<div><strong>📆 Season-Tag:</strong> <span id="seasonDay">1</span>/30</div>
 
 <button onclick="newDay()">🔁 Neuer Tag</button>
-
-<h2>⚔️ Weekly War</h2>
-<div class="card">
-Ziel: 5 perfekte Tage diese Woche<br>
-Fortschritt: <span id="weekDone">0</span>/5
-</div>
 
 <h2>📆 Wochen-Übersicht</h2>
 <div class="calendar" id="calendar"></div>
 
-<h2>🏆 Community (lokal)</h2>
+<h2>🥗 Spartan Ernährung</h2>
 <div class="card">
-Team: 
-<select id="team" onchange="saveTeam()">
-<option value="Sparta">Sparta</option>
-<option value="Beast">Beast</option>
-</select><br><br>
-XP: <span id="xp">0</span>
+<strong>BULK:</strong> Eier · Hafer · Reis · Fleisch · Quark<br><br>
+<strong>CUT:</strong> Skyr · Gemüse · Fisch · Shake<br><br>
+<strong>QUICK:</strong> Shake · Banane · Nüsse
 </div>
 
-<h2>🥗 Ernährung</h2>
-<button onclick="toggle('bulk')">💪 BULK</button>
-<div id="bulk" class="card hidden">Eier • Hafer • Reis • Fleisch • Quark</div>
-<button onclick="toggle('cut')">🔥 CUT</button>
-<div id="cut" class="card hidden">Skyr • Gemüse • Fisch • Shake</div>
-<button onclick="toggle('quick')">⚡ QUICK</button>
-<div id="quick" class="card hidden">Shake • Banane • Nüsse</div>
-
-<h2>🏅 Badges</h2>
+<h2>🏆 Erfolge</h2>
 <div id="badges"></div>
 
+<h2>📜 Legenden-Archiv</h2>
+<div id="history" class="card"></div>
+
 </div>
 
-<p class="footer">Auuu! 💪 Gym-Sparta 6.0 – Community</p>
+<p class="footer">Auuu! 💪 Gym-Sparta 7.0 – Imperium</p>
 
 <script>
-const quotesN=["Disziplin schlägt Motivation.","Heute wird nicht verhandelt.","Sparta lebt in dir."];
-const quotesB=["KEINE GNADE.","ZERSTÖREN.","KRIEG."];
+const quotesN=[
+"Disziplin schlägt Motivation.",
+"Ein Spartan zweifelt nicht.",
+"Stärke ist eine Entscheidung."
+];
+const quotesB=[
+"KEINE GNADE.",
+"HERRSCHAFT.",
+"IMPERIUM."
+];
+
 const tasks=[...document.querySelectorAll('.task')];
 const progress=document.getElementById('progress');
 const rankEl=document.getElementById('rank');
 const streakEl=document.getElementById('streak');
-const xpEl=document.getElementById('xp');
+const ipEl=document.getElementById('ip');
+const seasonDayEl=document.getElementById('seasonDay');
 const calendar=document.getElementById('calendar');
-const weekDoneEl=document.getElementById('weekDone');
 const badgesEl=document.getElementById('badges');
+const historyEl=document.getElementById('history');
 
 let xp=+localStorage.getItem('xp')||0;
+let ip=+localStorage.getItem('ip')||0;
 let streak=+localStorage.getItem('streak')||0;
 let beast=localStorage.getItem('beast')==='true';
 let week=JSON.parse(localStorage.getItem('week'))||[0,0,0,0,0,0,0];
+let seasonDay=+localStorage.getItem('seasonDay')||1;
+let history=JSON.parse(localStorage.getItem('history'))||[];
 
-function rank(x){return x<50?"Rekrut":x<150?"Krieger":x<300?"Elite":"GOTT";}
+function rank(x){
+  if(x<100) return "Rekrut";
+  if(x<300) return "Krieger";
+  if(x<600) return "Elite";
+  if(x<1000) return "Legende";
+  return "IMPERATOR";
+}
 
 function update(){
   const done=tasks.filter(t=>t.checked).length;
   progress.style.width=(done/tasks.length*100)+"%";
   rankEl.textContent=rank(xp);
   streakEl.textContent=streak;
-  xpEl.textContent=xp;
-  renderCalendar();
-  renderBadges();
+  ipEl.textContent=ip;
+  seasonDayEl.textContent=seasonDay;
+  renderCalendar(); renderBadges(); renderHistory();
 }
 
 tasks.forEach(t=>t.addEventListener('change',()=>{
-  if(t.checked) xp+=beast?10:5;
+  if(t.checked){
+    xp+=beast?15:8;
+    ip+=beast?5:2;
+  }
   localStorage.setItem('xp',xp);
+  localStorage.setItem('ip',ip);
   update();
 }));
 
 function newDay(){
   const perfect=tasks.every(t=>t.checked);
-  streak=perfect?streak+1:0;
+  if(perfect){
+    streak++; ip+=10;
+  } else streak=0;
+
   week.shift(); week.push(perfect?1:0);
+  seasonDay++;
+
+  if(seasonDay>30){
+    history.push(`Season beendet mit ${ip} IP`);
+    seasonDay=1; ip=0;
+  }
+
   localStorage.setItem('streak',streak);
   localStorage.setItem('week',JSON.stringify(week));
+  localStorage.setItem('seasonDay',seasonDay);
+  localStorage.setItem('ip',ip);
+  localStorage.setItem('history',JSON.stringify(history));
+
   tasks.forEach(t=>t.checked=false);
   update();
 }
 
 function renderCalendar(){
   calendar.innerHTML="";
-  week.forEach((d,i)=>{
+  ["Mo","Di","Mi","Do","Fr","Sa","So"].forEach((d,i)=>{
     const el=document.createElement('div');
-    el.className='day'+(d?' done':'');
-    el.textContent=["Mo","Di","Mi","Do","Fr","Sa","So"][i];
+    el.className='day'+(week[i]?' done':'');
+    el.textContent=d;
     calendar.appendChild(el);
   });
-  weekDoneEl.textContent=week.reduce((a,b)=>a+b,0);
 }
 
 function renderBadges(){
   badgesEl.innerHTML="";
   if(streak>=7) badgesEl.innerHTML+='<div class="badge">🏅 7-Tage-Spartan</div>';
   if(streak>=30) badgesEl.innerHTML+='<div class="badge">🏅 30-Tage-Elite</div>';
-  if(streak>=100) badgesEl.innerHTML+='<div class="badge">🏅 100-Tage-GOTT</div>';
+  if(streak>=100) badgesEl.innerHTML+='<div class="badge">🏅 100-Tage-IMPERATOR</div>';
 }
 
-function toggle(id){document.getElementById(id).classList.toggle('hidden');}
+function renderHistory(){
+  historyEl.innerHTML=history.length
+    ? history.join("<br>")
+    : "Noch keine abgeschlossenen Seasons.";
+}
+
 function toggleBeast(){
-  beast=!beast; localStorage.setItem('beast',beast);
+  beast=!beast;
+  localStorage.setItem('beast',beast);
   document.body.classList.toggle('beast',beast);
   randomQuote();
 }
+
 function randomQuote(){
   const a=beast?quotesB:quotesN;
-  document.getElementById('quote').textContent=a[Math.floor(Math.random()*a.length)];
+  document.getElementById('quote').textContent=
+    a[Math.floor(Math.random()*a.length)];
 }
-function saveTeam(){localStorage.setItem('team',document.getElementById('team').value);}
 
-function acceptOath(){
-  localStorage.setItem('oath','true');
-  document.getElementById('oathBox').style.display='none';
+function saveProfile(){
+  localStorage.setItem('name',nameInput.value);
+  localStorage.setItem('title',titleInput.value);
+  document.getElementById('profileBox').style.display='none';
   document.getElementById('app').classList.remove('hidden');
 }
 
-if(localStorage.getItem('oath')==='true') acceptOath();
+if(localStorage.getItem('name')){
+  document.getElementById('profileBox').style.display='none';
+  document.getElementById('app').classList.remove('hidden');
+}
+
 randomQuote(); update();
 </script>
 
