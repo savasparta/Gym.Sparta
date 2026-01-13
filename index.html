@@ -17,13 +17,16 @@ body {
   padding:20px;
   text-align:center;
 }
+body.beast { background:#400000; }
 h1,h2,h3 { color:gold; }
+
 .logo {
   max-width:260px;
   width:80%;
   margin:20px auto;
   display:block;
 }
+
 .card {
   border:2px solid gold;
   border-radius:14px;
@@ -31,6 +34,7 @@ h1,h2,h3 { color:gold; }
   margin:14px 0;
   text-align:left;
 }
+
 button {
   width:100%;
   padding:14px;
@@ -41,10 +45,12 @@ button {
   font-weight:bold;
   margin-top:10px;
 }
+
 input[type="checkbox"] {
   transform:scale(1.4);
   margin-right:10px;
 }
+
 .progress-box {
   border:2px solid gold;
   border-radius:12px;
@@ -57,21 +63,23 @@ input[type="checkbox"] {
   width:0%;
   border-radius:10px;
 }
+
 .hidden { display:none; }
+
+.badge {
+  border:2px solid gold;
+  border-radius:10px;
+  padding:10px;
+  margin:6px 0;
+  text-align:center;
+}
+
 .footer {
   color:gold;
   margin-top:30px;
   font-weight:bold;
 }
-.level {
-  font-size:20px;
-  color:gold;
-  margin-top:10px;
-}
-.beast {
-  background:red;
-  color:white;
-}
+
 .quote {
   font-style:italic;
   color:gold;
@@ -83,138 +91,108 @@ input[type="checkbox"] {
 <body>
 
 <img src="logo.png.PNG" class="logo">
-
 <h1>🏛️ GYM SPARTA 🏛️</h1>
 
 <div class="quote" id="quote"></div>
 
-<button onclick="toggleBeast()" id="beastBtn">🔥 BEAST MODE AKTIVIEREN</button>
-
-<h2>🔥 Daily Spartan Checklist</h2>
-
-<label class="card"><input type="checkbox" class="task"> 🥣 Frühstück clean</label>
-<label class="card"><input type="checkbox" class="task"> 🍗 Proteinreich essen</label>
-<label class="card"><input type="checkbox" class="task"> 🍌 Pre-Workout Fokus</label>
-<label class="card"><input type="checkbox" class="task"> 🏋️ Training erledigt</label>
-<label class="card"><input type="checkbox" class="task"> 🥛 Post-Workout Shake</label>
-<label class="card"><input type="checkbox" class="task"> 🌙 500g Quark</label>
-
-<div class="progress-box">
-<strong>Tages-Fortschritt</strong>
-<div class="progress-bar" id="progressBar"></div>
+<div class="card" id="oathBox">
+<strong>⚔️ Spartan Eid</strong><br><br>
+„Ich übernehme Verantwortung.<br>
+Ich trainiere auch wenn es schwer ist.<br>
+Ich breche nicht.“<br><br>
+<button onclick="acceptOath()">ICH SCHWÖRE</button>
 </div>
 
-<div class="level" id="levelText"></div>
-<div class="level">🔥 Streak: <span id="streak">0</span> Tage</div>
+<div id="main" class="hidden">
+
+<button onclick="toggleBeast()" id="beastBtn">🔥 BEAST MODE</button>
+
+<h2>🔥 Daily Ritual</h2>
+<label class="card"><input type="checkbox" class="task"> Morgen-Ritual</label>
+<label class="card"><input type="checkbox" class="task"> Training erledigt</label>
+<label class="card"><input type="checkbox" class="task"> Protein erreicht</label>
+<label class="card"><input type="checkbox" class="task"> Abend-Ritual</label>
+
+<div class="progress-box">
+<div class="progress-bar" id="progress"></div>
+</div>
+
+<div><strong>🏅 Rang:</strong> <span id="rank"></span></div>
+<div><strong>🔥 Streak:</strong> <span id="streak">0</span> Tage</div>
 
 <button onclick="newDay()">🔁 Neuer Tag</button>
 
-<h2>🏋️ Trainingspläne</h2>
-
-<button onclick="toggle('allin')">🔥 6 Tage ALL-IN</button>
-<div id="allin" class="card hidden">
-Mo: Brust<br>
-Di: Beine<br>
-Mi: Arme<br>
-Do: Rücken<br>
-Fr: Brust / Schulter<br>
-Sa: Pause<br>
-So: Schulter / Trapez / Nacken
-</div>
-
-<button onclick="toggle('split')">⚔️ 3–4 Tage Split</button>
-<div id="split" class="card hidden">
-<strong>3 Tage:</strong> Push / Pull / Legs<br><br>
-<strong>4 Tage:</strong><br>
-Brust-Trizeps<br>
-Rücken-Bizeps<br>
-Beine<br>
-Schulter-Nacken
-</div>
-
-<h2>🥗 Spartan Ernährung</h2>
-
-<button onclick="toggle('bulk')">💪 Muskelaufbau (einfach)</button>
+<h2>🥗 Ernährung</h2>
+<button onclick="toggle('bulk')">💪 BULK</button>
 <div id="bulk" class="card hidden">
-Frühstück: Eier + Haferflocken<br>
-Mittag: Reis + Hähnchen<br>
-Snack: Skyr / Shake<br>
-Abend: Fleisch + Kartoffeln<br>
-Vor Schlafen: Quark
+Eier + Hafer<br>Reis + Fleisch<br>Shake<br>Kartoffeln + Quark
 </div>
 
-<button onclick="toggle('cut')">🔥 Diät + Muskelerhalt</button>
+<button onclick="toggle('cut')">🔥 CUT</button>
 <div id="cut" class="card hidden">
-Frühstück: Eier / Skyr<br>
-Mittag: Gemüse + Fleisch<br>
-Snack: Proteinshake<br>
-Abend: Fisch / Salat<br>
-Carbs nur ums Training
+Eier / Skyr<br>Gemüse + Fleisch<br>Shake<br>Fisch
 </div>
 
-<h2>⚔️ Gesetze von Sparta</h2>
-
-<div class="card">
-• Keine Ausreden<br>
-• Training > Gefühle<br>
-• Disziplin schlägt Motivation<br>
-• Schmerz ist temporär – Stolz bleibt
+<button onclick="toggle('quick')">⚡ QUICK</button>
+<div id="quick" class="card hidden">
+Proteinshake<br>Banane<br>Nüsse<br>Fertig.
 </div>
 
-<p class="footer">Auuu! 💪 Gym-Sparta 4.0</p>
+<h2>🏆 Badges</h2>
+<div id="badges"></div>
 
-<audio id="sound">
-  <source src="https://actions.google.com/sounds/v1/human_voices/man_grunt.ogg">
-</audio>
+</div>
+
+<p class="footer">Auuu! 💪 Gym-Sparta 5.0 – Götterstufe</p>
 
 <script>
-const tasks = document.querySelectorAll('.task');
-const bar = document.getElementById('progressBar');
-const levelText = document.getElementById('levelText');
-const streakEl = document.getElementById('streak');
-const sound = document.getElementById('sound');
-const quotes = [
-  "Sparta lebt in dir.",
-  "Heute wird nicht verhandelt.",
-  "Schwach sein ist keine Option.",
-  "Du schuldest dir Größe."
+const quotesNormal = [
+  "Disziplin schlägt Motivation.",
+  "Heute wird nicht diskutiert.",
+  "Sparta lebt in dir."
 ];
+const quotesBeast = [
+  "KEINE GNADE.",
+  "ZERSTÖREN.",
+  "DU ODER DER SCHMERZ."
+];
+
+const tasks = document.querySelectorAll('.task');
+const progress = document.getElementById('progress');
+const rankEl = document.getElementById('rank');
+const streakEl = document.getElementById('streak');
+const badgesEl = document.getElementById('badges');
 
 let xp = Number(localStorage.getItem('xp')) || 0;
 let streak = Number(localStorage.getItem('streak')) || 0;
 let beast = localStorage.getItem('beast') === 'true';
 
-document.getElementById('quote').innerText =
-quotes[Math.floor(Math.random()*quotes.length)];
-
-function update() {
-  const done = [...tasks].filter(t => t.checked).length;
-  bar.style.width = (done / tasks.length) * 100 + '%';
-  levelText.innerText = "🏅 Level: " + getLevel(xp);
-  streakEl.innerText = streak;
-}
-
-function getLevel(xp) {
+function getRank(xp) {
   if (xp < 50) return "Rekrut";
   if (xp < 150) return "Krieger";
   if (xp < 300) return "Elite";
-  return "LEGENDÄR";
+  return "GOTT";
+}
+
+function update() {
+  const done = [...tasks].filter(t => t.checked).length;
+  progress.style.width = (done / tasks.length) * 100 + '%';
+  rankEl.innerText = getRank(xp);
+  streakEl.innerText = streak;
+  renderBadges();
 }
 
 tasks.forEach(t => {
   t.addEventListener('change', () => {
-    if (t.checked) {
-      xp += beast ? 10 : 5;
-      sound.play();
-    }
+    if (t.checked) xp += beast ? 10 : 5;
     localStorage.setItem('xp', xp);
     update();
   });
 });
 
 function newDay() {
-  const allDone = [...tasks].every(t => t.checked);
-  streak = allDone ? streak + 1 : 0;
+  if ([...tasks].every(t => t.checked)) streak++;
+  else streak = 0;
   localStorage.setItem('streak', streak);
   tasks.forEach(t => t.checked = false);
   update();
@@ -229,11 +207,34 @@ function toggleBeast() {
   localStorage.setItem('beast', beast);
   document.body.classList.toggle('beast', beast);
   document.getElementById('beastBtn').innerText =
-    beast ? "🔥 BEAST MODE AKTIV" : "🔥 BEAST MODE AKTIVIEREN";
+    beast ? "🔥 BEAST MODE AKTIV" : "🔥 BEAST MODE";
+  randomQuote();
 }
 
-toggleBeast();
-toggleBeast();
+function renderBadges() {
+  badgesEl.innerHTML = "";
+  if (streak >= 7) badgesEl.innerHTML += `<div class="badge">🏅 7-Tage-Spartan</div>`;
+  if (streak >= 30) badgesEl.innerHTML += `<div class="badge">🏅 30-Tage-Elite</div>`;
+  if (streak >= 100) badgesEl.innerHTML += `<div class="badge">🏅 100-Tage-GOTT</div>`;
+}
+
+function randomQuote() {
+  const arr = beast ? quotesBeast : quotesNormal;
+  document.getElementById('quote').innerText =
+    arr[Math.floor(Math.random()*arr.length)];
+}
+
+function acceptOath() {
+  localStorage.setItem('oath', 'true');
+  document.getElementById('oathBox').style.display = 'none';
+  document.getElementById('main').classList.remove('hidden');
+}
+
+if (localStorage.getItem('oath') === 'true') {
+  acceptOath();
+}
+
+randomQuote();
 update();
 </script>
 
