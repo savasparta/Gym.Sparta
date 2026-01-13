@@ -5,6 +5,11 @@
 <title>GYM SPARTA</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+<!-- APP INSTALL -->
+<link rel="apple-touch-icon" href="logo.png.PNG">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#000000">
+
 <style>
 body {
   margin: 0;
@@ -52,9 +57,7 @@ button {
   margin-top: 15px;
 }
 
-.hidden {
-  display: none;
-}
+.hidden { display: none; }
 
 .progress-box {
   border: 2px solid gold;
@@ -68,7 +71,6 @@ button {
   background: gold;
   width: 0%;
   border-radius: 10px;
-  transition: width 0.3s;
 }
 
 .footer {
@@ -81,7 +83,7 @@ button {
 
 <body>
 
-<img src="logo.png.PNG" alt="Gym Sparta Logo" class="logo">
+<img src="logo.png.PNG" class="logo">
 
 <h1>🏛️ GYM SPARTA 🏛️</h1>
 
@@ -89,31 +91,41 @@ button {
 <strong>Sparta-Mentalität</strong><br><br>
 Hartes Training. Keine Ausreden.<br>
 Disziplin schlägt Motivation.<br>
-Du trainierst nicht für heute –<br>
-du trainierst für den Krieger, der du wirst.
+Jeder Tag zählt.
 </div>
 
 <h2>🔥 Daily Checklist</h2>
 
-<label class="card"><input type="checkbox" id="task1"> 🥣 Frühstück – sauber essen</label>
-<label class="card"><input type="checkbox" id="task2"> 🍗 Mittag – Protein rein</label>
-<label class="card"><input type="checkbox" id="task3"> 🍌 Pre-Workout – Fokus</label>
-<label class="card"><input type="checkbox" id="task4"> 🏋️ Training – keine Ausreden</label>
-<label class="card"><input type="checkbox" id="task5"> 🥛 Post-Workout – Regeneration</label>
-<label class="card"><input type="checkbox" id="task6"> 🌙 500 g Quark vor dem Schlafen</label>
+<label class="card"><input type="checkbox" id="task1"> 🥣 Frühstück clean</label>
+<label class="card"><input type="checkbox" id="task2"> 🍗 Proteinreich essen</label>
+<label class="card"><input type="checkbox" id="task3"> 🍌 Pre-Workout Fokus</label>
+<label class="card"><input type="checkbox" id="task4"> 🏋️ Training durchgezogen</label>
+<label class="card"><input type="checkbox" id="task5"> 🥛 Post-Workout Shake</label>
+<label class="card"><input type="checkbox" id="task6"> 🌙 500g Quark</label>
 
 <div class="progress-box">
-<strong>Fortschritt</strong>
+<strong>Tages-Fortschritt</strong>
 <div class="progress-bar" id="progressBar"></div>
 </div>
 
 <button onclick="resetDay()">🔁 Tag zurücksetzen</button>
 
+<h2>📆 Wochen-Tracker</h2>
+
+<label class="card"><input type="checkbox" id="day1"> Montag</label>
+<label class="card"><input type="checkbox" id="day2"> Dienstag</label>
+<label class="card"><input type="checkbox" id="day3"> Mittwoch</label>
+<label class="card"><input type="checkbox" id="day4"> Donnerstag</label>
+<label class="card"><input type="checkbox" id="day5"> Freitag</label>
+<label class="card"><input type="checkbox" id="day6"> Samstag</label>
+<label class="card"><input type="checkbox" id="day7"> Sonntag</label>
+
+<button onclick="resetWeek()">🔁 Woche zurücksetzen</button>
+
 <h2>🏋️ Trainingspläne</h2>
 
-<button onclick="toggle('allin')">🔥 6 Tage ALL-IN Sparta</button>
+<button onclick="toggle('allin')">🔥 6 Tage ALL-IN</button>
 <div id="allin" class="card hidden">
-<strong>Hartes Power Sparta Training</strong><br><br>
 Mo: Brust<br>
 Di: Beine<br>
 Mi: Arme<br>
@@ -123,43 +135,53 @@ Sa: Pause<br>
 So: Schulter / Trapez / Nacken
 </div>
 
-<button onclick="toggle('split')">⚔️ Sparta Split (3–4 Tage)</button>
+<button onclick="toggle('split')">⚔️ 3–4 Tage Split</button>
 <div id="split" class="card hidden">
-<strong>Für weniger Zeit</strong><br><br>
-<strong>3 Tage:</strong><br>
-Push – Pull – Legs<br><br>
+<strong>3 Tage:</strong> Push / Pull / Legs<br><br>
 <strong>4 Tage:</strong><br>
-Brust / Trizeps<br>
-Rücken / Bizeps<br>
+Brust-Trizeps<br>
+Rücken-Bizeps<br>
 Beine<br>
-Schulter / Nacken
+Schulter-Nacken
 </div>
 
-<p class="footer">Auuu! 💪 Disziplin entscheidet.</p>
+<p class="footer">Auuu! 💪 Gym-Sparta 2.0</p>
 
 <script>
 const boxes = document.querySelectorAll('input[type="checkbox"]');
 const bar = document.getElementById('progressBar');
 
 function updateProgress() {
-  const checked = [...boxes].filter(b => b.checked).length;
-  bar.style.width = (checked / boxes.length) * 100 + '%';
+  const daily = [...boxes].slice(0,6);
+  const done = daily.filter(b => b.checked).length;
+  bar.style.width = (done / daily.length) * 100 + '%';
 }
 
-boxes.forEach(box => {
-  box.checked = localStorage.getItem(box.id) === 'true';
-  box.addEventListener('change', () => {
-    localStorage.setItem(box.id, box.checked);
+boxes.forEach(b => {
+  b.checked = localStorage.getItem(b.id) === 'true';
+  b.addEventListener('change', () => {
+    localStorage.setItem(b.id, b.checked);
     updateProgress();
   });
 });
 
 function resetDay() {
-  boxes.forEach(box => {
-    box.checked = false;
-    localStorage.setItem(box.id, false);
+  boxes.forEach(b => {
+    if (b.id.startsWith("task")) {
+      b.checked = false;
+      localStorage.setItem(b.id, false);
+    }
   });
   updateProgress();
+}
+
+function resetWeek() {
+  boxes.forEach(b => {
+    if (b.id.startsWith("day")) {
+      b.checked = false;
+      localStorage.setItem(b.id, false);
+    }
+  });
 }
 
 function toggle(id) {
