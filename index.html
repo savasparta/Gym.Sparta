@@ -1,182 +1,173 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-  <meta charset="UTF-8">
-  <title>GYM SPARTA</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8">
+<title>GYM SPARTA</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <style>
-    body {
-      margin: 0;
-      padding: 20px;
-      background: #000;
-      color: #fff;
-      font-family: Arial, sans-serif;
-      text-align: center;
-    }
+<style>
+body {
+  margin: 0;
+  padding: 20px;
+  background: #000;
+  color: #fff;
+  font-family: Arial, sans-serif;
+  text-align: center;
+}
 
-    h1, h2 {
-      color: gold;
-      margin-bottom: 10px;
-    }
+h1, h2 {
+  color: gold;
+}
 
-    .logo {
-      max-width: 260px;
-      width: 80%;
-      margin: 20px auto;
-      display: block;
-    }
+.logo {
+  max-width: 260px;
+  width: 80%;
+  margin: 20px auto;
+  display: block;
+}
 
-    .card {
-      border: 2px solid gold;
-      border-radius: 14px;
-      padding: 16px;
-      margin: 14px 0;
-      font-size: 18px;
-      text-align: left;
-    }
+.card {
+  border: 2px solid gold;
+  border-radius: 14px;
+  padding: 16px;
+  margin: 14px 0;
+  font-size: 17px;
+  text-align: left;
+}
 
-    input[type="checkbox"] {
-      transform: scale(1.4);
-      margin-right: 10px;
-    }
+input[type="checkbox"] {
+  transform: scale(1.4);
+  margin-right: 10px;
+}
 
-    .progress-box {
-      border: 2px solid gold;
-      border-radius: 12px;
-      padding: 10px;
-      margin: 20px 0;
-    }
+button {
+  width: 100%;
+  background: gold;
+  color: black;
+  border: none;
+  padding: 14px;
+  border-radius: 12px;
+  font-size: 18px;
+  font-weight: bold;
+  margin-top: 15px;
+}
 
-    .progress-bar {
-      height: 20px;
-      background: gold;
-      width: 0%;
-      border-radius: 10px;
-      transition: width 0.3s;
-    }
+.hidden {
+  display: none;
+}
 
-    button {
-      background: gold;
-      color: black;
-      border: none;
-      padding: 12px 20px;
-      border-radius: 10px;
-      font-size: 16px;
-      font-weight: bold;
-      margin-top: 15px;
-    }
+.progress-box {
+  border: 2px solid gold;
+  border-radius: 12px;
+  padding: 10px;
+  margin: 20px 0;
+}
 
-    .footer {
-      margin-top: 30px;
-      color: gold;
-      font-weight: bold;
-    }
-  </style>
+.progress-bar {
+  height: 20px;
+  background: gold;
+  width: 0%;
+  border-radius: 10px;
+  transition: width 0.3s;
+}
+
+.footer {
+  margin-top: 30px;
+  color: gold;
+  font-weight: bold;
+}
+</style>
 </head>
 
 <body>
 
-  <!-- LOGO -->
-  <img src="logo.png.PNG" alt="Gym Sparta Logo" class="logo">
+<img src="logo.png.PNG" alt="Gym Sparta Logo" class="logo">
 
-  <h1>🏛️ GYM SPARTA 🏛️</h1>
-  <p><strong>Auuu!</strong> Disziplin. Fokus. Wachstum 💪</p>
+<h1>🏛️ GYM SPARTA 🏛️</h1>
 
-  <h2>🔥 Daily Checklist</h2>
+<div class="card">
+<strong>Sparta-Mentalität</strong><br><br>
+Hartes Training. Keine Ausreden.<br>
+Disziplin schlägt Motivation.<br>
+Du trainierst nicht für heute –<br>
+du trainierst für den Krieger, der du wirst.
+</div>
 
-  <label class="card">
-    <input type="checkbox" id="task1"> 🥣 Frühstück – sauber essen
-  </label>
+<h2>🔥 Daily Checklist</h2>
 
-  <label class="card">
-    <input type="checkbox" id="task2"> 🍗 Mittag – Protein rein
-  </label>
+<label class="card"><input type="checkbox" id="task1"> 🥣 Frühstück – sauber essen</label>
+<label class="card"><input type="checkbox" id="task2"> 🍗 Mittag – Protein rein</label>
+<label class="card"><input type="checkbox" id="task3"> 🍌 Pre-Workout – Fokus</label>
+<label class="card"><input type="checkbox" id="task4"> 🏋️ Training – keine Ausreden</label>
+<label class="card"><input type="checkbox" id="task5"> 🥛 Post-Workout – Regeneration</label>
+<label class="card"><input type="checkbox" id="task6"> 🌙 500 g Quark vor dem Schlafen</label>
 
-  <label class="card">
-    <input type="checkbox" id="task3"> 🍌 Pre-Workout – Fokus
-  </label>
+<div class="progress-box">
+<strong>Fortschritt</strong>
+<div class="progress-bar" id="progressBar"></div>
+</div>
 
-  <label class="card">
-    <input type="checkbox" id="task4"> 🏋️ Training – keine Ausreden
-  </label>
+<button onclick="resetDay()">🔁 Tag zurücksetzen</button>
 
-  <label class="card">
-    <input type="checkbox" id="task5"> 🥛 Post-Workout – Regeneration
-  </label>
+<h2>🏋️ Trainingspläne</h2>
 
-  <label class="card">
-    <input type="checkbox" id="task6"> 🌙 500g Quark vor dem Schlafen
-  </label>
+<button onclick="toggle('allin')">🔥 6 Tage ALL-IN Sparta</button>
+<div id="allin" class="card hidden">
+<strong>Hartes Power Sparta Training</strong><br><br>
+Mo: Brust<br>
+Di: Beine<br>
+Mi: Arme<br>
+Do: Rücken<br>
+Fr: Brust / Schulter<br>
+Sa: Pause<br>
+So: Schulter / Trapez / Nacken
+</div>
 
-  <div class="progress-box">
-    <strong>Fortschritt</strong>
-    <div class="progress-bar" id="progressBar"></div>
-  </div>
+<button onclick="toggle('split')">⚔️ Sparta Split (3–4 Tage)</button>
+<div id="split" class="card hidden">
+<strong>Für weniger Zeit</strong><br><br>
+<strong>3 Tage:</strong><br>
+Push – Pull – Legs<br><br>
+<strong>4 Tage:</strong><br>
+Brust / Trizeps<br>
+Rücken / Bizeps<br>
+Beine<br>
+Schulter / Nacken
+</div>
 
-  <button onclick="resetDay()">🔁 Tag zurücksetzen</button>
+<p class="footer">Auuu! 💪 Disziplin entscheidet.</p>
 
-  <h2>🏋️ Trainingsplan</h2>
+<script>
+const boxes = document.querySelectorAll('input[type="checkbox"]');
+const bar = document.getElementById('progressBar');
 
-  <div class="card">
-    <strong>Push (Brust / Schulter / Trizeps)</strong><br>
-    • Bankdrücken<br>
-    • Schulterdrücken<br>
-    • Dips<br>
-    • Seitheben<br>
-    • Trizeps Pushdowns
-  </div>
+function updateProgress() {
+  const checked = [...boxes].filter(b => b.checked).length;
+  bar.style.width = (checked / boxes.length) * 100 + '%';
+}
 
-  <div class="card">
-    <strong>Pull (Rücken / Bizeps)</strong><br>
-    • Klimmzüge<br>
-    • Rudern<br>
-    • Latzug<br>
-    • Face Pulls<br>
-    • Bizepscurls
-  </div>
-
-  <div class="card">
-    <strong>Legs (Beine / Core)</strong><br>
-    • Kniebeugen<br>
-    • Beinpresse<br>
-    • Beinbeuger<br>
-    • Wadenheben<br>
-    • Bauch
-  </div>
-
-  <p class="footer">🔥 Ziel: 200–250g Protein / Tag 🔥</p>
-  <p class="footer">Malaka… Auuu! 💪</p>
-
-  <script>
-    const boxes = document.querySelectorAll('input[type="checkbox"]');
-    const bar = document.getElementById('progressBar');
-
-    function updateProgress() {
-      const total = boxes.length;
-      const checked = [...boxes].filter(b => b.checked).length;
-      const percent = (checked / total) * 100;
-      bar.style.width = percent + '%';
-    }
-
-    boxes.forEach(box => {
-      box.checked = localStorage.getItem(box.id) === 'true';
-      box.addEventListener('change', () => {
-        localStorage.setItem(box.id, box.checked);
-        updateProgress();
-      });
-    });
-
-    function resetDay() {
-      boxes.forEach(box => {
-        box.checked = false;
-        localStorage.setItem(box.id, false);
-      });
-      updateProgress();
-    }
-
+boxes.forEach(box => {
+  box.checked = localStorage.getItem(box.id) === 'true';
+  box.addEventListener('change', () => {
+    localStorage.setItem(box.id, box.checked);
     updateProgress();
-  </script>
+  });
+});
+
+function resetDay() {
+  boxes.forEach(box => {
+    box.checked = false;
+    localStorage.setItem(box.id, false);
+  });
+  updateProgress();
+}
+
+function toggle(id) {
+  document.getElementById(id).classList.toggle('hidden');
+}
+
+updateProgress();
+</script>
 
 </body>
 </html>
