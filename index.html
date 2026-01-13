@@ -10,81 +10,22 @@
 <meta name="theme-color" content="#000000">
 
 <style>
-body {
-  background:#000;
-  color:#fff;
-  font-family:Arial, sans-serif;
-  padding:20px;
-  text-align:center;
-}
-body.beast { background:#400000; }
-h1,h2,h3 { color:gold; }
-
-.logo {
-  max-width:260px;
-  width:80%;
-  margin:20px auto;
-  display:block;
-}
-
-.card {
-  border:2px solid gold;
-  border-radius:14px;
-  padding:16px;
-  margin:14px 0;
-  text-align:left;
-}
-
-button {
-  width:100%;
-  padding:14px;
-  background:gold;
-  border:none;
-  border-radius:12px;
-  font-size:18px;
-  font-weight:bold;
-  margin-top:10px;
-}
-
-input[type="checkbox"] {
-  transform:scale(1.4);
-  margin-right:10px;
-}
-
-.progress-box {
-  border:2px solid gold;
-  border-radius:12px;
-  padding:10px;
-  margin:20px 0;
-}
-.progress-bar {
-  height:20px;
-  background:gold;
-  width:0%;
-  border-radius:10px;
-}
-
-.hidden { display:none; }
-
-.badge {
-  border:2px solid gold;
-  border-radius:10px;
-  padding:10px;
-  margin:6px 0;
-  text-align:center;
-}
-
-.footer {
-  color:gold;
-  margin-top:30px;
-  font-weight:bold;
-}
-
-.quote {
-  font-style:italic;
-  color:gold;
-  margin:15px 0;
-}
+body{background:#000;color:#fff;font-family:Arial,sans-serif;padding:20px;text-align:center}
+body.beast{background:#3b0000}
+h1,h2,h3{color:gold}
+.logo{max-width:260px;width:80%;margin:20px auto;display:block}
+.card{border:2px solid gold;border-radius:14px;padding:16px;margin:14px 0;text-align:left}
+button{width:100%;padding:14px;background:gold;border:none;border-radius:12px;font-size:18px;font-weight:bold;margin-top:10px}
+input[type=checkbox]{transform:scale(1.4);margin-right:10px}
+.hidden{display:none}
+.progress-box{border:2px solid gold;border-radius:12px;padding:10px;margin:20px 0}
+.progress-bar{height:20px;background:gold;width:0%;border-radius:10px}
+.badge{border:2px solid gold;border-radius:10px;padding:10px;margin:6px 0;text-align:center}
+.calendar{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;margin-top:10px}
+.day{border:1px solid gold;border-radius:8px;padding:8px;font-size:12px}
+.day.done{background:gold;color:#000}
+.footer{color:gold;margin-top:30px;font-weight:bold}
+.quote{font-style:italic;color:gold;margin:15px 0}
 </style>
 </head>
 
@@ -97,13 +38,12 @@ input[type="checkbox"] {
 
 <div class="card" id="oathBox">
 <strong>⚔️ Spartan Eid</strong><br><br>
-„Ich übernehme Verantwortung.<br>
-Ich trainiere auch wenn es schwer ist.<br>
-Ich breche nicht.“<br><br>
+Ich trainiere – auch wenn es schwer ist.<br>
+Ich breche nicht.<br><br>
 <button onclick="acceptOath()">ICH SCHWÖRE</button>
 </div>
 
-<div id="main" class="hidden">
+<div id="app" class="hidden">
 
 <button onclick="toggleBeast()" id="beastBtn">🔥 BEAST MODE</button>
 
@@ -122,120 +62,123 @@ Ich breche nicht.“<br><br>
 
 <button onclick="newDay()">🔁 Neuer Tag</button>
 
+<h2>⚔️ Weekly War</h2>
+<div class="card">
+Ziel: 5 perfekte Tage diese Woche<br>
+Fortschritt: <span id="weekDone">0</span>/5
+</div>
+
+<h2>📆 Wochen-Übersicht</h2>
+<div class="calendar" id="calendar"></div>
+
+<h2>🏆 Community (lokal)</h2>
+<div class="card">
+Team: 
+<select id="team" onchange="saveTeam()">
+<option value="Sparta">Sparta</option>
+<option value="Beast">Beast</option>
+</select><br><br>
+XP: <span id="xp">0</span>
+</div>
+
 <h2>🥗 Ernährung</h2>
 <button onclick="toggle('bulk')">💪 BULK</button>
-<div id="bulk" class="card hidden">
-Eier + Hafer<br>Reis + Fleisch<br>Shake<br>Kartoffeln + Quark
-</div>
-
+<div id="bulk" class="card hidden">Eier • Hafer • Reis • Fleisch • Quark</div>
 <button onclick="toggle('cut')">🔥 CUT</button>
-<div id="cut" class="card hidden">
-Eier / Skyr<br>Gemüse + Fleisch<br>Shake<br>Fisch
-</div>
-
+<div id="cut" class="card hidden">Skyr • Gemüse • Fisch • Shake</div>
 <button onclick="toggle('quick')">⚡ QUICK</button>
-<div id="quick" class="card hidden">
-Proteinshake<br>Banane<br>Nüsse<br>Fertig.
-</div>
+<div id="quick" class="card hidden">Shake • Banane • Nüsse</div>
 
-<h2>🏆 Badges</h2>
+<h2>🏅 Badges</h2>
 <div id="badges"></div>
 
 </div>
 
-<p class="footer">Auuu! 💪 Gym-Sparta 5.0 – Götterstufe</p>
+<p class="footer">Auuu! 💪 Gym-Sparta 6.0 – Community</p>
 
 <script>
-const quotesNormal = [
-  "Disziplin schlägt Motivation.",
-  "Heute wird nicht diskutiert.",
-  "Sparta lebt in dir."
-];
-const quotesBeast = [
-  "KEINE GNADE.",
-  "ZERSTÖREN.",
-  "DU ODER DER SCHMERZ."
-];
+const quotesN=["Disziplin schlägt Motivation.","Heute wird nicht verhandelt.","Sparta lebt in dir."];
+const quotesB=["KEINE GNADE.","ZERSTÖREN.","KRIEG."];
+const tasks=[...document.querySelectorAll('.task')];
+const progress=document.getElementById('progress');
+const rankEl=document.getElementById('rank');
+const streakEl=document.getElementById('streak');
+const xpEl=document.getElementById('xp');
+const calendar=document.getElementById('calendar');
+const weekDoneEl=document.getElementById('weekDone');
+const badgesEl=document.getElementById('badges');
 
-const tasks = document.querySelectorAll('.task');
-const progress = document.getElementById('progress');
-const rankEl = document.getElementById('rank');
-const streakEl = document.getElementById('streak');
-const badgesEl = document.getElementById('badges');
+let xp=+localStorage.getItem('xp')||0;
+let streak=+localStorage.getItem('streak')||0;
+let beast=localStorage.getItem('beast')==='true';
+let week=JSON.parse(localStorage.getItem('week'))||[0,0,0,0,0,0,0];
 
-let xp = Number(localStorage.getItem('xp')) || 0;
-let streak = Number(localStorage.getItem('streak')) || 0;
-let beast = localStorage.getItem('beast') === 'true';
+function rank(x){return x<50?"Rekrut":x<150?"Krieger":x<300?"Elite":"GOTT";}
 
-function getRank(xp) {
-  if (xp < 50) return "Rekrut";
-  if (xp < 150) return "Krieger";
-  if (xp < 300) return "Elite";
-  return "GOTT";
-}
-
-function update() {
-  const done = [...tasks].filter(t => t.checked).length;
-  progress.style.width = (done / tasks.length) * 100 + '%';
-  rankEl.innerText = getRank(xp);
-  streakEl.innerText = streak;
+function update(){
+  const done=tasks.filter(t=>t.checked).length;
+  progress.style.width=(done/tasks.length*100)+"%";
+  rankEl.textContent=rank(xp);
+  streakEl.textContent=streak;
+  xpEl.textContent=xp;
+  renderCalendar();
   renderBadges();
 }
 
-tasks.forEach(t => {
-  t.addEventListener('change', () => {
-    if (t.checked) xp += beast ? 10 : 5;
-    localStorage.setItem('xp', xp);
-    update();
-  });
-});
+tasks.forEach(t=>t.addEventListener('change',()=>{
+  if(t.checked) xp+=beast?10:5;
+  localStorage.setItem('xp',xp);
+  update();
+}));
 
-function newDay() {
-  if ([...tasks].every(t => t.checked)) streak++;
-  else streak = 0;
-  localStorage.setItem('streak', streak);
-  tasks.forEach(t => t.checked = false);
+function newDay(){
+  const perfect=tasks.every(t=>t.checked);
+  streak=perfect?streak+1:0;
+  week.shift(); week.push(perfect?1:0);
+  localStorage.setItem('streak',streak);
+  localStorage.setItem('week',JSON.stringify(week));
+  tasks.forEach(t=>t.checked=false);
   update();
 }
 
-function toggle(id) {
-  document.getElementById(id).classList.toggle('hidden');
+function renderCalendar(){
+  calendar.innerHTML="";
+  week.forEach((d,i)=>{
+    const el=document.createElement('div');
+    el.className='day'+(d?' done':'');
+    el.textContent=["Mo","Di","Mi","Do","Fr","Sa","So"][i];
+    calendar.appendChild(el);
+  });
+  weekDoneEl.textContent=week.reduce((a,b)=>a+b,0);
 }
 
-function toggleBeast() {
-  beast = !beast;
-  localStorage.setItem('beast', beast);
-  document.body.classList.toggle('beast', beast);
-  document.getElementById('beastBtn').innerText =
-    beast ? "🔥 BEAST MODE AKTIV" : "🔥 BEAST MODE";
+function renderBadges(){
+  badgesEl.innerHTML="";
+  if(streak>=7) badgesEl.innerHTML+='<div class="badge">🏅 7-Tage-Spartan</div>';
+  if(streak>=30) badgesEl.innerHTML+='<div class="badge">🏅 30-Tage-Elite</div>';
+  if(streak>=100) badgesEl.innerHTML+='<div class="badge">🏅 100-Tage-GOTT</div>';
+}
+
+function toggle(id){document.getElementById(id).classList.toggle('hidden');}
+function toggleBeast(){
+  beast=!beast; localStorage.setItem('beast',beast);
+  document.body.classList.toggle('beast',beast);
   randomQuote();
 }
+function randomQuote(){
+  const a=beast?quotesB:quotesN;
+  document.getElementById('quote').textContent=a[Math.floor(Math.random()*a.length)];
+}
+function saveTeam(){localStorage.setItem('team',document.getElementById('team').value);}
 
-function renderBadges() {
-  badgesEl.innerHTML = "";
-  if (streak >= 7) badgesEl.innerHTML += `<div class="badge">🏅 7-Tage-Spartan</div>`;
-  if (streak >= 30) badgesEl.innerHTML += `<div class="badge">🏅 30-Tage-Elite</div>`;
-  if (streak >= 100) badgesEl.innerHTML += `<div class="badge">🏅 100-Tage-GOTT</div>`;
+function acceptOath(){
+  localStorage.setItem('oath','true');
+  document.getElementById('oathBox').style.display='none';
+  document.getElementById('app').classList.remove('hidden');
 }
 
-function randomQuote() {
-  const arr = beast ? quotesBeast : quotesNormal;
-  document.getElementById('quote').innerText =
-    arr[Math.floor(Math.random()*arr.length)];
-}
-
-function acceptOath() {
-  localStorage.setItem('oath', 'true');
-  document.getElementById('oathBox').style.display = 'none';
-  document.getElementById('main').classList.remove('hidden');
-}
-
-if (localStorage.getItem('oath') === 'true') {
-  acceptOath();
-}
-
-randomQuote();
-update();
+if(localStorage.getItem('oath')==='true') acceptOath();
+randomQuote(); update();
 </script>
 
 </body>
