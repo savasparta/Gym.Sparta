@@ -12,10 +12,10 @@
 --dark:#000;
 --card:#111;
 --input:#1a1a1a;
---danger:#a00000;
+--danger:#8b0000;
 --ok:#0a7a2f;
 --warn:#ff9800;
---glow:0 0 12px rgba(212,175,55,.6);
+--glow:0 0 14px rgba(212,175,55,.55);
 }
 
 body{
@@ -27,14 +27,18 @@ font-family:Arial,Helvetica,sans-serif;
 text-align:center;
 }
 
-h1,h2,h3{color:var(--gold);text-shadow:var(--glow);}
+h1,h2,h3{
+color:var(--gold);
+text-shadow:var(--glow);
+}
+
 .card{
 background:linear-gradient(145deg,#111,#000);
 border:2px solid var(--gold);
 border-radius:18px;
 padding:18px;
 margin:20px auto;
-max-width:820px;
+max-width:860px;
 text-align:left;
 box-shadow:var(--glow);
 animation:fadeIn .6s ease;
@@ -54,8 +58,15 @@ cursor:pointer;
 transition:.2s;
 }
 
-button:hover{transform:scale(1.03);box-shadow:var(--glow);}
-button.danger{background:#8b0000;color:#fff;}
+button:hover{
+transform:scale(1.03);
+box-shadow:var(--glow);
+}
+
+button.danger{
+background:var(--danger);
+color:#fff;
+}
 
 input,select,textarea{
 width:100%;
@@ -69,8 +80,6 @@ font-size:16px;
 }
 
 .hidden{display:none}
-.status-ok{color:#6fff95;font-weight:bold;}
-.status-bad{color:#ff6f6f;font-weight:bold;}
 
 .week,.month{
 display:grid;
@@ -89,8 +98,23 @@ text-align:center;
 transition:.2s;
 }
 
+.day.done{
+background:var(--gold);
+color:#000;
+font-weight:bold;
+}
+
 .day:hover{box-shadow:var(--glow);}
-.day.done{background:var(--gold);color:#000;font-weight:bold;}
+
+.rankBox{
+margin-top:10px;
+padding:10px;
+border-radius:12px;
+background:#000;
+border:1px solid var(--gold);
+text-align:center;
+font-weight:bold;
+}
 
 @keyframes fadeIn{
 from{opacity:0;transform:translateY(10px);}
@@ -116,28 +140,29 @@ to{opacity:1;}
 <!-- STATUS -->
 <div class="card">
 <h3>🛡️ SYSTEM STATUS</h3>
-Rang: <span id="rank"></span><br>
-Level: <span id="level"></span><br>
-XP: <span id="xp"></span><br>
-🔥 Streak: <span id="streak"></span><br>
-Letzte Aktion: <span id="lastAction"></span>
+Rang: <span id="rankText"></span><br>
+Level: <span id="levelText"></span><br>
+XP: <span id="xpText"></span><br>
+🔥 Streak: <span id="streakText"></span><br>
+Letzte Aktion: <span id="lastActionText"></span>
+<div class="rankBox" id="rankBox"></div>
 </div>
 
 <!-- COACH -->
 <div class="card">
 <h3>🧠 SPARTAN COACH</h3>
-<div id="coachText"></div>
+<div id="coachQuote"></div>
 </div>
 
 <!-- BEAST MODE -->
 <div class="card">
-<h3>🔥 BEAST MODE</h3>
+<h3>🔥 BEAST MODE – 30 TAGE</h3>
 Status: <span id="beastStatus"></span>
 <button onclick="startBeast()">Beast starten</button>
 <div id="beastBox" class="hidden">
-<label><input type="checkbox" id="bTrain"> Training</label><br>
-<label><input type="checkbox" id="bFood"> Ernährung</label><br>
-<label><input type="checkbox" id="bSleep"> Schlaf</label><br>
+<label><input type="checkbox" id="bmTrain"> Training</label><br>
+<label><input type="checkbox" id="bmFood"> Ernährung</label><br>
+<label><input type="checkbox" id="bmSleep"> Schlaf</label><br>
 <button onclick="finishBeast()">Tag abschließen</button>
 </div>
 </div>
@@ -173,6 +198,7 @@ Status: <span id="beastStatus"></span>
 <option>Masse</option>
 <option>Lean Bulk</option>
 <option>Diät</option>
+<option>Hardcore</option>
 </select>
 <button onclick="logFood()">Speichern</button>
 </div>
@@ -181,24 +207,25 @@ Status: <span id="beastStatus"></span>
 <div class="card">
 <h3>📓 LOGBUCH</h3>
 <textarea id="logText"></textarea>
-<button onclick="addLog()">Eintrag</button>
+<button onclick="addLog()">Eintrag speichern</button>
 <div id="feed"></div>
 </div>
 
 <!-- BACKUP -->
 <div class="card">
-<h3>📦 BACKUP</h3>
-<button onclick="exportData()">⬇️ Export</button>
+<h3>📦 BACKUP & WIEDERHERSTELLUNG</h3>
+<button onclick="exportData()">⬇️ Backup exportieren</button>
 <input type="file" id="importFile">
-<button onclick="importData()">⬆️ Import</button>
+<button onclick="importData()">⬆️ Backup importieren</button>
 </div>
 
 <button class="danger" onclick="resetAll()">⚠️ RESET</button>
 </div>
 
 <script>
-/* ================= CORE ================= */
+/* ================= CORE STATE ================= */
 const MASTER_CODE="SPARTA-ELITE";
+
 let xp=+localStorage.getItem("xp")||0;
 let streak=+localStorage.getItem("streak")||0;
 let lastAction=localStorage.getItem("lastAction")||"–";
@@ -207,15 +234,8 @@ let logs=JSON.parse(localStorage.getItem("logs"))||[];
 let weekDays=JSON.parse(localStorage.getItem("weekDays"))||[0,0,0,0,0,0,0];
 let monthDays=JSON.parse(localStorage.getItem("monthDays"))||{};
 
-function unlock(){
-if(accessCode.value!==MASTER_CODE) return alert("Falscher Code");
-localStorage.setItem("name",spartaName.value);
-accessBox.classList.add("hidden");
-app.classList.remove("hidden");
-render();
-}
-
-function rank(){
+/* ================= RANK ================= */
+function getRank(){
 if(xp<100) return "Rekrut";
 if(xp<300) return "Hoplit";
 if(xp<700) return "Krieger";
@@ -223,6 +243,25 @@ if(xp<1200) return "Veteran";
 return "LEGENDÄR";
 }
 
+/* ================= COACH ================= */
+const COACH_QUOTES=[
+"Disziplin schlägt Motivation. Jeden Tag.",
+"Sparta erwartet Leistung – keine Ausreden.",
+"Schmerz ist temporär. Stolz bleibt.",
+"Wer heute aufgibt, dient morgen niemandem.",
+"Ein weiterer Satz trennt dich von Mittelmaß."
+];
+
+/* ================= AUTH ================= */
+function unlock(){
+if(accessCode.value!==MASTER_CODE) return alert("Falscher Code");
+localStorage.setItem("sparta_name",spartaName.value);
+accessBox.classList.add("hidden");
+app.classList.remove("hidden");
+renderAll();
+}
+
+/* ================= XP ================= */
 function addXP(v,txt){
 xp+=v;
 lastAction=txt;
@@ -230,25 +269,30 @@ localStorage.setItem("xp",xp);
 localStorage.setItem("lastAction",txt);
 }
 
-function render(){
-rank.textContent=rank();
-level.textContent=Math.floor(xp/100)+1;
-xp.textContent=xp;
-streak.textContent=streak;
-lastAction.textContent=lastAction;
-coachText.textContent=[
-"Disziplin schlägt Motivation.",
-"Sparta erwartet Leistung.",
-"Schmerz formt Legenden."
-][new Date().getDate()%3];
+/* ================= RENDER ================= */
+function renderAll(){
+document.getElementById("rankText").textContent=getRank();
+document.getElementById("rankBox").textContent="RANG: "+getRank();
+document.getElementById("levelText").textContent=Math.floor(xp/100)+1;
+document.getElementById("xpText").textContent=xp;
+document.getElementById("streakText").textContent=streak;
+document.getElementById("lastActionText").textContent=lastAction;
+
+document.getElementById("coachQuote").textContent=
+"🗡️ "+COACH_QUOTES[new Date().getDate()%COACH_QUOTES.length];
+
+document.getElementById("beastStatus").textContent=
+beastDay?`Tag ${beastDay}/30`:"Inaktiv";
+
+document.getElementById("beastBox")
+.classList.toggle("hidden",!beastDay);
+
 renderWeek();
 renderMonth();
 renderFeed();
-beastStatus.textContent=beastDay?`Tag ${beastDay}/30`:"Inaktiv";
-beastBox.classList.toggle("hidden",!beastDay);
 }
 
-/* WEEK / MONTH */
+/* ================= WEEK / MONTH ================= */
 function renderWeek(){
 week.innerHTML="";
 ["Mo","Di","Mi","Do","Fr","Sa","So"].forEach((d,i)=>{
@@ -259,7 +303,7 @@ el.onclick=()=>{
 weekDays[i]^=1;
 addXP(10,"Training "+d);
 localStorage.setItem("weekDays",JSON.stringify(weekDays));
-render();
+renderAll();
 };
 week.appendChild(el);
 });
@@ -278,26 +322,35 @@ el.onclick=()=>{
 monthDays[k]=!monthDays[k];
 addXP(5,"Check-in");
 localStorage.setItem("monthDays",JSON.stringify(monthDays));
-render();
+renderAll();
 };
 month.appendChild(el);
 }
 }
 
-/* ACTIONS */
-function logTraining(){addXP(20,"Training "+trainingType.value);render();}
-function logFood(){addXP(10,"Ernährung "+foodMode.value);render();}
-function startBeast(){if(!beastDay){beastDay=1;localStorage.setItem("beastDay",1);render();}}
+/* ================= ACTIONS ================= */
+function logTraining(){addXP(20,"Training "+trainingType.value);renderAll();}
+function logFood(){addXP(10,"Ernährung "+foodMode.value);renderAll();}
+
+function startBeast(){
+if(!beastDay){
+beastDay=1;
+localStorage.setItem("beastDay",1);
+renderAll();
+}
+}
+
 function finishBeast(){
-if(!(bTrain.checked&&bFood.checked&&bSleep.checked)) return alert("Alles abhaken");
+if(!(bmTrain.checked&&bmFood.checked&&bmSleep.checked))
+return alert("Alles abhaken");
 addXP(40,"Beast Tag "+beastDay);
 beastDay++;
 localStorage.setItem("beastDay",beastDay);
-bTrain.checked=bFood.checked=bSleep.checked=false;
-render();
+bmTrain.checked=bmFood.checked=bmSleep.checked=false;
+renderAll();
 }
 
-/* LOG */
+/* ================= LOGBOOK ================= */
 function addLog(){
 if(!logText.value) return;
 logs.unshift(logText.value+" · "+new Date().toLocaleTimeString());
@@ -308,20 +361,28 @@ renderFeed();
 
 function renderFeed(){
 feed.innerHTML="";
-logs.forEach(l=>{let d=document.createElement("div");d.textContent=l;feed.appendChild(d);});
+logs.forEach(l=>{
+let d=document.createElement("div");
+d.textContent=l;
+feed.appendChild(d);
+});
 }
 
-/* BACKUP */
+/* ================= BACKUP ================= */
 function exportData(){
 const data={};
 for(let i=0;i<localStorage.length;i++){
 let k=localStorage.key(i);
 data[k]=localStorage.getItem(k);
 }
-const blob=new Blob([JSON.stringify(data,null,2)],{type:"application/json"});
+const blob=new Blob([JSON.stringify({
+version:"GYM-SPARTA-MASTER",
+timestamp:new Date().toISOString(),
+data
+},null,2)],{type:"application/json"});
 const a=document.createElement("a");
 a.href=URL.createObjectURL(blob);
-a.download="sparta-backup.json";
+a.download="gym-sparta-backup.json";
 a.click();
 }
 
@@ -330,20 +391,30 @@ const f=importFile.files[0];
 if(!f) return;
 const r=new FileReader();
 r.onload=e=>{
-const d=JSON.parse(e.target.result);
+const json=JSON.parse(e.target.result);
+if(!json.data) return alert("Ungültiges Backup");
 localStorage.clear();
-Object.keys(d).forEach(k=>localStorage.setItem(k,d[k]));
+Object.keys(json.data).forEach(k=>localStorage.setItem(k,json.data[k]));
 location.reload();
 };
 r.readAsText(f);
 }
 
+/* ================= RESET ================= */
 function resetAll(){
 if(confirm("ALLES LÖSCHEN?")){
 localStorage.clear();
 location.reload();
 }
 }
+
+/* AUTO LOGIN */
+if(localStorage.getItem("sparta_name")){
+accessBox.classList.add("hidden");
+app.classList.remove("hidden");
+renderAll();
+}
 </script>
+
 </body>
 </html>
