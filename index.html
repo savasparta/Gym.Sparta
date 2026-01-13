@@ -2,7 +2,7 @@
 <html lang="de">
 <head>
 <meta charset="UTF-8">
-<title>GYM SPARTA – BRUTAL REALITY</title>
+<title>GYM SPARTA – COMMUNITY</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <link rel="apple-touch-icon" href="logo.png.PNG">
@@ -11,129 +11,166 @@
 
 <style>
 body{
-  background:#000;color:#fff;font-family:Arial,sans-serif;
-  padding:20px;text-align:center
+  margin:0;padding:20px;
+  background:#000;color:#fff;
+  font-family:Arial,sans-serif;
+  text-align:center
 }
-body.fail{background:#300000}
 h1,h2{color:gold}
-.logo{max-width:260px;width:80%;margin:20px auto;display:block}
+.logo{
+  max-width:220px;width:80%;
+  margin:20px auto;display:block
+}
 .card{
-  border:2px solid gold;border-radius:14px;
-  padding:16px;margin:14px 0;text-align:left
+  border:2px solid gold;
+  border-radius:16px;
+  padding:20px;
+  margin:16px auto;
+  max-width:420px;
+  text-align:left
+}
+input,select{
+  width:100%;
+  padding:12px;
+  border-radius:10px;
+  border:none;
+  margin-top:8px;
+  font-size:16px
 }
 button{
-  width:100%;padding:14px;background:gold;color:#000;
-  border:none;border-radius:12px;font-size:18px;
-  font-weight:bold;margin-top:10px
+  width:100%;
+  padding:14px;
+  margin-top:14px;
+  background:gold;
+  color:#000;
+  border:none;
+  border-radius:12px;
+  font-size:18px;
+  font-weight:bold
 }
-input[type=checkbox]{transform:scale(1.4);margin-right:10px}
-input,select,textarea{
-  width:100%;padding:10px;border-radius:8px;
-  border:none;margin-top:6px
-}
-.progress{
-  height:20px;background:#222;border-radius:10px;margin:10px 0
-}
-.bar{
-  height:100%;background:gold;width:0%;border-radius:10px
+.link{
+  color:gold;
+  text-align:center;
+  margin-top:10px;
+  cursor:pointer
 }
 .hidden{display:none}
-.alert{
-  color:red;font-weight:bold;text-align:center;margin:15px 0
+.footer{
+  margin-top:30px;
+  color:gold;
+  font-weight:bold
 }
-.footer{color:gold;margin-top:30px;font-weight:bold}
 </style>
 </head>
 
 <body>
 
 <img src="logo.png.PNG" class="logo">
-<h1>☠️ GYM SPARTA – BRUTAL REALITY ☠️</h1>
+<h1>🏛️ GYM SPARTA 🏛️</h1>
+
+<!-- LOGIN -->
+<div class="card" id="loginBox">
+<h2>Login</h2>
+<input id="loginName" placeholder="Spartan Name">
+<input id="loginPass" type="password" placeholder="Passwort">
+<button onclick="login()">EINLOGGEN</button>
+<div class="link" onclick="showRegister()">Noch kein Spartan? Registrieren</div>
+</div>
+
+<!-- REGISTER -->
+<div class="card hidden" id="registerBox">
+<h2>Registrierung</h2>
+<input id="regName" placeholder="Spartan Name">
+<input id="regPass" type="password" placeholder="Passwort">
+<select id="regTitle">
+<option>Krieger</option>
+<option>Elite</option>
+<option>Legende</option>
+<option>Imperator</option>
+</select>
+<button onclick="register()">SPARTAN WERDEN</button>
+<div class="link" onclick="showLogin()">Schon dabei? Login</div>
+</div>
+
+<!-- APP -->
+<div class="hidden" id="app">
+<h2 id="welcome"></h2>
 
 <div class="card">
-<strong>Spartan Gesetz:</strong><br>
-Wenn du versagst, lügst du nicht.<br>
-Du zahlst.
+<strong>📜 Spartan Codex</strong><br><br>
+• Disziplin schlägt Motivation<br>
+• Kein Bullshit<br>
+• Training ist Pflicht<br>
+• Community ist Stärke
 </div>
 
-<h2>🔥 Tagespflichten</h2>
-<label class="card"><input type="checkbox" class="task"> Training brutal durchgezogen</label>
-<label class="card"><input type="checkbox" class="task"> Ernährung 100% eingehalten</label>
-<label class="card"><input type="checkbox" class="task"> Kein Bullshit, keine Ausreden</label>
-<label class="card"><input type="checkbox" class="task"> Geist stärker als Körper</label>
+<div class="card">
+<strong>🏋️ Trainingsoptionen</strong><br><br>
+<b>6 Tage ALL-IN:</b><br>
+Mo Brust · Di Beine · Mi Arme · Do Rücken · Fr Brust/Schulter · So Schulter/Nacken<br><br>
 
-<div class="progress">
-  <div class="bar" id="bar"></div>
+<b>3–4 Tage SPLIT:</b><br>
+Tag 1: Oberkörper<br>
+Tag 2: Unterkörper<br>
+Tag 3: Push / Pull (optional)
 </div>
 
-<div><strong>🔥 Pain Score:</strong> <span id="pain">0</span>/10</div>
-<input type="range" min="0" max="10" id="painInput">
-
-<div><strong>☠️ Death Count:</strong> <span id="deaths">0</span></div>
-
-<div class="alert hidden" id="alert">
-DU HAST HEUTE VERSAGT.<br>
-SPARTA VERGISST NICHT.
+<button onclick="logout()">LOGOUT</button>
 </div>
 
-<h2>⚔️ Brutale Wahrheit</h2>
-<textarea id="truth" placeholder="Warum warst du heute schwach?"></textarea>
-
-<button onclick="judge()">⚖️ SPARTAN JUDGE</button>
-<button onclick="endDay()">☠️ TAG ABSCHLIESSEN</button>
-
-<p class="footer">Auuu. 💀 Gym-Sparta 9.0</p>
+<p class="footer">Auuu 💪 Gym-Sparta Community</p>
 
 <script>
-const tasks=[...document.querySelectorAll('.task')];
-const bar=document.getElementById('bar');
-const painInput=document.getElementById('painInput');
-const painEl=document.getElementById('pain');
-const deathsEl=document.getElementById('deaths');
-const alertBox=document.getElementById('alert');
-const truth=document.getElementById('truth');
+const loginBox=document.getElementById("loginBox");
+const registerBox=document.getElementById("registerBox");
+const app=document.getElementById("app");
+const welcome=document.getElementById("welcome");
 
-let deaths=+localStorage.getItem('deaths')||0;
-
-painInput.oninput=()=>painEl.textContent=painInput.value;
-
-tasks.forEach(t=>t.addEventListener('change',update));
-
-function update(){
-  const done=tasks.filter(t=>t.checked).length;
-  bar.style.width=(done/tasks.length*100)+"%";
+function showRegister(){
+  loginBox.classList.add("hidden");
+  registerBox.classList.remove("hidden");
+}
+function showLogin(){
+  registerBox.classList.add("hidden");
+  loginBox.classList.remove("hidden");
 }
 
-function judge(){
-  if(truth.value.length<20){
-    alert("LÜGE. SCHREIB DIE WAHRHEIT.");
-    return;
+function register(){
+  const name=regName.value;
+  const pass=regPass.value;
+  const title=regTitle.value;
+
+  if(!name||!pass){alert("Alles ausfüllen!");return;}
+
+  localStorage.setItem("spartanUser",JSON.stringify({name,pass,title}));
+  alert("Willkommen, Spartaner!");
+  showLogin();
+}
+
+function login(){
+  const user=JSON.parse(localStorage.getItem("spartanUser"));
+  if(!user){alert("Kein Account gefunden");return;}
+  if(loginName.value!==user.name||loginPass.value!==user.pass){
+    alert("Falsche Daten");return;
   }
-  alert("URTEIL GESPEICHERT. VERGISS ES NICHT.");
+  startApp(user);
 }
 
-function endDay(){
-  const perfect=tasks.every(t=>t.checked);
-  if(!perfect){
-    deaths++;
-    document.body.classList.add('fail');
-    alertBox.classList.remove('hidden');
-  }else{
-    document.body.classList.remove('fail');
-    alertBox.classList.add('hidden');
-  }
-  localStorage.setItem('deaths',deaths);
-  deathsEl.textContent=deaths;
-
-  tasks.forEach(t=>t.checked=false);
-  truth.value="";
-  painInput.value=0;
-  painEl.textContent=0;
-  update();
+function startApp(user){
+  loginBox.classList.add("hidden");
+  registerBox.classList.add("hidden");
+  app.classList.remove("hidden");
+  welcome.textContent="Willkommen "+user.title+" "+user.name+" 🏛️";
 }
 
-deathsEl.textContent=deaths;
-update();
+function logout(){
+  location.reload();
+}
+
+const saved=JSON.parse(localStorage.getItem("spartanUser"));
+if(saved){
+  startApp(saved);
+}
 </script>
 
 </body>
