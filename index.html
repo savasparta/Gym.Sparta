@@ -35,7 +35,6 @@ margin:20px auto;
 display:block;
 }
 
-/* CARD */
 .card{
 background:var(--card);
 border:2px solid var(--gold);
@@ -47,7 +46,6 @@ text-align:left;
 box-sizing:border-box;
 }
 
-/* BUTTON */
 button{
 width:100%;
 padding:14px;
@@ -66,7 +64,6 @@ background:var(--danger);
 color:#fff;
 }
 
-/* INPUTS */
 input,select,textarea{
 width:100%;
 padding:14px;
@@ -82,7 +79,6 @@ outline:none;
 
 .hidden{display:none}
 
-/* WEEK */
 .week{
 display:grid;
 grid-template-columns:repeat(7,1fr);
@@ -133,7 +129,6 @@ font-weight:bold;
 <img src="logo.png.PNG" class="logo">
 <h1>🏛️ GYM SPARTA 🏛️</h1>
 
-<!-- ACCESS -->
 <div class="card hidden" id="accessBox">
 <h2>⚔️ Spartan Zugang</h2>
 <p>Ein Code. Ein Gerät. Ein Krieger.</p>
@@ -142,7 +137,6 @@ font-weight:bold;
 <button onclick="unlock()">Eintreten</button>
 </div>
 
-<!-- APP -->
 <div class="hidden" id="app">
 <h2 id="welcome"></h2>
 
@@ -160,13 +154,11 @@ XP: <span id="xp">0</span><br>
 🔥 Streak: <span id="streak">0</span>
 </div>
 
-<!-- ACHIEVEMENTS -->
 <div class="card">
 <h3>🏅 ERFOLGE</h3>
-<div id="badges"></div>
+<div id="badgesBox"></div>
 </div>
 
-<!-- BEAST MODE -->
 <div class="card">
 <h3>🔥 BEAST MODE – 30 TAGE</h3>
 <p id="beastStatus"></p>
@@ -179,7 +171,6 @@ XP: <span id="xp">0</span><br>
 </div>
 </div>
 
-<!-- TRAINING -->
 <div class="card">
 <h3>🏋️ TRAININGSPLAN</h3>
 <select id="planSelect" onchange="savePlan()">
@@ -197,7 +188,6 @@ XP: <span id="xp">0</span><br>
 <div class="week" id="week"></div>
 </div>
 
-<!-- ERNÄHRUNG -->
 <div class="card">
 <h3>🥗 ERNÄHRUNG</h3>
 <select id="nutritionSelect" onchange="saveNutrition()">
@@ -211,7 +201,6 @@ XP: <span id="xp">0</span><br>
 
 <div class="card hidden" id="nutritionInfo"></div>
 
-<!-- LOGBUCH -->
 <div class="card">
 <h3>📓 LOGBUCH</h3>
 <textarea id="postText" placeholder="Was hast du heute zerstört?"></textarea>
@@ -219,20 +208,17 @@ XP: <span id="xp">0</span><br>
 <div id="feed"></div>
 </div>
 
-<!-- LEADERBOARD -->
 <div class="card">
 <h3>🏆 LEGENDE</h3>
 <div id="leaderboard"></div>
 </div>
 
 <button class="danger" onclick="resetAll()">⚠️ RESET (NUR DU)</button>
-
 </div>
 
 <p class="footer">GYM-SPARTA · OFFLINE · MASTER BUILD 🏛️</p>
 
 <script>
-/* ===== ACCESS SECURITY ===== */
 const MASTER_CODE="SPARTA-ELITE";
 const DEVICE_ID_KEY="sparta_device";
 
@@ -255,17 +241,16 @@ if(localStorage.getItem("sparta_access")!==deviceID()) return;
 accessBox.classList.add("hidden");
 app.classList.remove("hidden");
 welcome.textContent="Willkommen "+localStorage.getItem("sparta_name");
+loadSelections();
 renderAll();
 }
 
-/* ===== DATA ===== */
 let xp=+localStorage.getItem("xp")||0;
 let streak=+localStorage.getItem("streak")||0;
 let days=JSON.parse(localStorage.getItem("week"))||[0,0,0,0,0,0,0];
 let posts=JSON.parse(localStorage.getItem("feed"))||[];
 let badges=JSON.parse(localStorage.getItem("badges"))||[];
 
-/* ===== PLANS ===== */
 const plans={
 6:"Mo Brust · Di Beine · Mi Arme · Do Rücken · Fr Brust/Schulter · Sa Pause · So Schulter",
 4:"OK schwer · UK schwer · Pause · OK Volumen · UK Volumen",
@@ -279,12 +264,28 @@ diet:"☠️ 2200 kcal · Defizit",
 hardcore:"🏛️ Fleisch · Eier · Wasser"
 };
 
-/* ===== TRAINING ===== */
 function savePlan(){
 localStorage.setItem("plan",planSelect.value);
-planInfo.innerHTML=plans[planSelect.value];
+planInfo.textContent=plans[planSelect.value];
 planInfo.classList.remove("hidden");
 trackerBox.classList.remove("hidden");
+}
+
+function saveNutrition(){
+localStorage.setItem("nutrition",nutritionSelect.value);
+nutritionInfo.textContent=nutrition[nutritionSelect.value];
+nutritionInfo.classList.remove("hidden");
+}
+
+function loadSelections(){
+if(localStorage.getItem("plan")){
+planSelect.value=localStorage.getItem("plan");
+savePlan();
+}
+if(localStorage.getItem("nutrition")){
+nutritionSelect.value=localStorage.getItem("nutrition");
+saveNutrition();
+}
 }
 
 function renderWeek(){
@@ -303,48 +304,6 @@ week.appendChild(el);
 });
 }
 
-/* ===== BEAST MODE ===== */
-let beastActive=localStorage.getItem("beast_active")==="true";
-let beastDay=+localStorage.getItem("beast_day")||0;
-let beastLast=localStorage.getItem("beast_last");
-
-function startBeast(){
-if(beastActive) return;
-beastActive=true;
-beastDay=1;
-saveBeast();
-updateBeast();
-}
-
-function updateBeast(){
-if(!beastActive){
-beastStatus.textContent="Bereit";
-beastTasks.classList.add("hidden");
-return;
-}
-beastStatus.textContent="Tag "+beastDay+"/30";
-beastTasks.classList.remove("hidden");
-}
-
-function completeBeastDay(){
-let today=new Date().toDateString();
-if(beastLast===today) return alert("Heute schon erledigt");
-if(!bmTrain.checked||!bmFood.checked||!bmCodex.checked)
-return alert("Alles abhaken");
-xp+=50;
-beastDay++;
-beastLast=today;
-bmTrain.checked=bmFood.checked=bmCodex.checked=false;
-if(beastDay>30){
-alert("🏆 BEAST MODE SIEGER");
-beastActive=false;
-beastDay=0;
-}
-saveBeast();
-save();
-}
-
-/* ===== LOGBUCH ===== */
 function addPost(){
 if(!postText.value) return;
 posts.unshift("🗡️ "+postText.value);
@@ -353,11 +312,19 @@ postText.value="";
 save();
 }
 
-/* ===== BADGES ===== */
+function renderFeed(){
+feed.innerHTML="";
+posts.forEach(p=>{
+let d=document.createElement("div");
+d.className="feedPost";
+d.textContent=p;
+feed.appendChild(d);
+});
+}
+
 function checkBadges(){
 if(xp>=500 && !badges.includes("Krieger")) badges.push("Krieger");
 if(streak>=7 && !badges.includes("Disziplin")) badges.push("Disziplin");
-if(beastDay>=30 && !badges.includes("Beast")) badges.push("Beast");
 localStorage.setItem("badges",JSON.stringify(badges));
 }
 
@@ -367,11 +334,10 @@ badges.forEach(b=>{
 let d=document.createElement("div");
 d.className="badge";
 d.textContent=b;
-badges.appendChild(d);
+badgesBox.appendChild(d);
 });
 }
 
-/* ===== SAVE / RENDER ===== */
 function save(){
 localStorage.setItem("xp",xp);
 localStorage.setItem("streak",streak);
@@ -381,23 +347,16 @@ checkBadges();
 renderAll();
 }
 
-function saveBeast(){
-localStorage.setItem("beast_active",beastActive);
-localStorage.setItem("beast_day",beastDay);
-localStorage.setItem("beast_last",beastLast);
-}
-
 function renderAll(){
 level.textContent=Math.floor(xp/100)+1;
 document.getElementById("xp").textContent=xp;
 document.getElementById("streak").textContent=streak;
 renderWeek();
 renderFeed();
-updateBeast();
+renderBadges();
 leaderboard.innerHTML="🥇 Leonidas · 3200 XP<br>🥈 Ares · 2400 XP<br><b>Du:</b> "+xp+" XP";
 }
 
-/* RESET */
 function resetAll(){
 if(confirm("ALLES LÖSCHEN?")){
 localStorage.clear();
@@ -405,7 +364,6 @@ location.reload();
 }
 }
 
-/* INIT */
 if(localStorage.getItem("sparta_access")===deviceID()) start();
 else accessBox.classList.remove("hidden");
 </script>
