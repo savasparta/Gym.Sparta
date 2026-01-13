@@ -15,6 +15,7 @@
 --input:#1a1a1a;
 --danger:#a00000;
 --ok:#0a7a2f;
+--blue:#2f7aff;
 }
 
 body{
@@ -73,14 +74,14 @@ font-size:16px;
 .status-ok{color:#6fff95;font-weight:bold;}
 .status-bad{color:#ff6f6f;font-weight:bold;}
 
-.week{
+.week, .month{
 display:grid;
 grid-template-columns:repeat(7,1fr);
 gap:6px;
 margin-top:10px;
 }
 
-.day{
+.day, .mday{
 border:1px solid var(--gold);
 border-radius:8px;
 padding:10px;
@@ -89,11 +90,10 @@ cursor:pointer;
 text-align:center;
 }
 
-.day.done{
-background:var(--gold);
-color:#000;
-font-weight:bold;
-}
+.day.done{background:var(--gold);color:#000;font-weight:bold;}
+.mday.train{background:#1f7a3f;}
+.mday.check{background:#2f7aff;}
+.mday.beast{background:#7a1f1f;}
 
 .footer{color:var(--gold);margin:30px 0;font-weight:bold;}
 </style>
@@ -114,6 +114,7 @@ font-weight:bold;
 <div class="hidden" id="app">
 <h2 id="welcome"></h2>
 
+<!-- SYSTEM STATUS -->
 <div class="card">
 <h3>🛡️ SYSTEM STATUS</h3>
 Gerät: <span id="deviceStatus" class="status-ok">Gebunden</span><br>
@@ -124,6 +125,7 @@ Ernährung: <span id="activeFood">–</span><br>
 Letzter Tag aktiv: <span id="lastDay">–</span>
 </div>
 
+<!-- PROFIL -->
 <div class="card">
 <strong>👤 PROFIL</strong><br>
 Level: <span id="level">1</span><br>
@@ -131,6 +133,32 @@ XP: <span id="xp">0</span><br>
 🔥 Streak: <span id="streak">0</span>
 </div>
 
+<!-- BEAST MODE -->
+<div class="card">
+<h3>🔥 BEAST MODE – 30 TAGE</h3>
+Status: <span id="beastStatus">Nicht aktiv</span><br><br>
+<button onclick="startBeast()">Beast Mode starten</button>
+<div id="beastBox" class="hidden">
+<label><input type="checkbox" id="bmTrain"> Training</label><br>
+<label><input type="checkbox" id="bmFood"> Ernährung</label><br>
+<label><input type="checkbox" id="bmSleep"> Schlaf</label><br>
+<button onclick="completeBeastDay()">Tag abschließen</button>
+</div>
+</div>
+
+<!-- WOCHEN TRACKER -->
+<div class="card">
+<h3>📅 WOCHEN-TRACKER</h3>
+<div class="week" id="week"></div>
+</div>
+
+<!-- MONATS KALENDER -->
+<div class="card">
+<h3>🗓️ MONATS-KALENDER</h3>
+<div class="month" id="month"></div>
+</div>
+
+<!-- LOGS -->
 <div class="card">
 <h3>📜 XP-CHRONIK</h3>
 <div id="xpLog"></div>
@@ -146,49 +174,9 @@ XP: <span id="xp">0</span><br>
 <div id="badgesBox"></div>
 </div>
 
-<!-- 🧠 BEAST MODE -->
-<div class="card">
-<h3>🔥 BEAST MODE – 30 TAGE</h3>
-Status: <span id="beastStatus">Nicht aktiv</span><br><br>
-<button onclick="startBeast()">Beast Mode starten</button>
-<div id="beastBox" class="hidden">
-<label><input type="checkbox" id="bmTrain"> Training</label><br>
-<label><input type="checkbox" id="bmFood"> Ernährung</label><br>
-<label><input type="checkbox" id="bmSleep"> Schlaf</label><br>
-<button onclick="completeBeastDay()">Tag abschließen</button>
-</div>
-</div>
-
-<!-- 📅 WOCHEN TRACKER -->
-<div class="card">
-<h3>📅 WOCHEN-TRACKER</h3>
-<div class="week" id="week"></div>
-</div>
-
-<div class="card">
-<h3>🏋️ TRAININGSPLAN</h3>
-<select id="planSelect" onchange="savePlan()">
-<option value="">– auswählen –</option>
-<option value="6 Tage ALL-IN">6 Tage ALL-IN</option>
-<option value="4 Tage Spartan Split">4 Tage Spartan Split</option>
-<option value="3 Tage Spartan Split">3 Tage Spartan Split</option>
-</select>
-</div>
-
-<div class="card">
-<h3>🥗 ERNÄHRUNG</h3>
-<select id="foodSelect" onchange="saveFood()">
-<option value="">– auswählen –</option>
-<option value="Masse">Masse</option>
-<option value="Lean Bulk">Lean Bulk</option>
-<option value="Diät">Diät</option>
-<option value="Hardcore">Hardcore</option>
-</select>
-</div>
-
 <div class="card">
 <h3>📓 LOGBUCH</h3>
-<textarea id="postText" placeholder="Was hast du heute getan?"></textarea>
+<textarea id="postText"></textarea>
 <button onclick="addPost()">Speichern</button>
 <div id="feed"></div>
 </div>
@@ -212,93 +200,40 @@ let lastAction=localStorage.getItem("lastAction")||"–";
 let lastDay=localStorage.getItem("lastDay")||"–";
 let weekDays=JSON.parse(localStorage.getItem("weekDays"))||[0,0,0,0,0,0,0];
 let beastDay=+localStorage.getItem("beastDay")||0;
-
-function deviceID(){
-if(!localStorage.getItem(DEVICE_ID_KEY))
-localStorage.setItem(DEVICE_ID_KEY,Math.random().toString(36));
-return localStorage.getItem(DEVICE_ID_KEY);
-}
-
-function unlock(){
-if(accessCode.value!==MASTER_CODE) return alert("Falscher Code");
-localStorage.setItem("sparta_access",deviceID());
-localStorage.setItem("sparta_name",spartaName.value);
-start();
-}
-
-function start(){
-if(localStorage.getItem("sparta_access")!==deviceID()){
-document.getElementById("deviceStatus").textContent="BLOCKIERT";
-document.getElementById("deviceStatus").className="status-bad";
-return;
-}
-accessBox.classList.add("hidden");
-app.classList.remove("hidden");
-welcome.textContent="Willkommen "+localStorage.getItem("sparta_name");
-dailyCheck();
-renderAll();
-}
-
-function dailyCheck(){
-const today=new Date().toLocaleDateString();
-if(lastDay!==today){
-streak++;
-logSystem("Neuer Tag · Streak erhöht");
-lastDay=today;
-localStorage.setItem("lastDay",today);
-localStorage.setItem("streak",streak);
-}
-}
-
-function logXP(amount,reason){
-xp+=amount;
-xpHistory.unshift(new Date().toLocaleString()+" · "+reason+" ("+amount+" XP)");
-localStorage.setItem("xpHistory",JSON.stringify(xpHistory));
-lastAction=reason;
-localStorage.setItem("lastAction",reason);
-}
+let calendar=JSON.parse(localStorage.getItem("calendar"))||{};
 
 function logSystem(text){
 systemHistory.unshift(new Date().toLocaleString()+" · "+text);
 localStorage.setItem("systemHistory",JSON.stringify(systemHistory));
 }
 
-function addPost(){
-if(!postText.value) return;
-posts.unshift("🗡️ "+postText.value);
-logXP(5,"Logbuch");
-logSystem("Logbuch-Eintrag");
-postText.value="";
-save();
+function logXP(amount,reason){
+xp+=amount;
+xpHistory.unshift(new Date().toLocaleString()+" · "+reason+" ("+amount+" XP)");
+lastAction=reason;
+localStorage.setItem("xp",xp);
+localStorage.setItem("xpHistory",JSON.stringify(xpHistory));
+localStorage.setItem("lastAction",reason);
 }
 
-function savePlan(){
-localStorage.setItem("activePlan",planSelect.value);
-logSystem("Trainingsplan gesetzt");
+function renderMonth(){
+month.innerHTML="";
+let d=new Date(),y=d.getFullYear(),m=d.getMonth();
+let days=new Date(y,m+1,0).getDate();
+for(let i=1;i<=days;i++){
+let key=y+"-"+m+"-"+i;
+let el=document.createElement("div");
+el.className="mday "+(calendar[key]||"");
+el.textContent=i;
+el.onclick=()=>{
+calendar[key]=calendar[key]?"": "check";
+logXP(5,"Kalender Check-in");
+logSystem("Kalender-Check-in "+key);
+localStorage.setItem("calendar",JSON.stringify(calendar));
 renderAll();
+};
+month.appendChild(el);
 }
-
-function saveFood(){
-localStorage.setItem("activeFood",foodSelect.value);
-logSystem("Ernährung gesetzt");
-renderAll();
-}
-
-function startBeast(){
-if(beastDay>0) return;
-beastDay=1;
-localStorage.setItem("beastDay",beastDay);
-logSystem("Beast Mode gestartet");
-renderAll();
-}
-
-function completeBeastDay(){
-if(!(bmTrain.checked && bmFood.checked && bmSleep.checked)) return alert("Alles abhaken!");
-logXP(25,"Beast Mode Tag "+beastDay);
-beastDay++;
-localStorage.setItem("beastDay",beastDay);
-bmTrain.checked=bmFood.checked=bmSleep.checked=false;
-renderAll();
 }
 
 function renderWeek(){
@@ -310,6 +245,7 @@ el.textContent=d;
 el.onclick=()=>{
 weekDays[i]=weekDays[i]?0:1;
 logXP(10,"Training "+d);
+logSystem("Training "+d);
 localStorage.setItem("weekDays",JSON.stringify(weekDays));
 renderAll();
 };
@@ -317,71 +253,26 @@ week.appendChild(el);
 });
 }
 
-function checkBadges(){
-if(xp>=500 && !badges.includes("Krieger")) badges.push("Krieger");
-if(streak>=7 && !badges.includes("Blutwoche")) badges.push("Blutwoche");
-if(beastDay>=30 && !badges.includes("Beast")) badges.push("Beast");
-localStorage.setItem("badges",JSON.stringify(badges));
-}
-
 function renderAll(){
 level.textContent=Math.floor(xp/100)+1;
-xp.textContent=xp;
+document.getElementById("xp").textContent=xp;
 document.getElementById("streak").textContent=streak;
 document.getElementById("lastAction").textContent=lastAction;
-document.getElementById("activePlan").textContent=localStorage.getItem("activePlan")||"–";
-document.getElementById("activeFood").textContent=localStorage.getItem("activeFood")||"–";
 document.getElementById("lastDay").textContent=lastDay;
-document.getElementById("beastStatus").textContent=beastDay>0?"Tag "+beastDay+"/30":"Nicht aktiv";
-document.getElementById("beastBox").classList.toggle("hidden",beastDay===0);
 renderWeek();
-renderFeed();
-renderBadges();
+renderMonth();
 renderXPLog();
 renderSystemLog();
 }
 
-function renderFeed(){
-feed.innerHTML="";
-posts.forEach(p=>{
-let d=document.createElement("div");
-d.textContent=p;
-feed.appendChild(d);
-});
-}
-
-function renderBadges(){
-badgesBox.innerHTML="";
-badges.forEach(b=>{
-let d=document.createElement("div");
-d.textContent=b;
-badgesBox.appendChild(d);
-});
-}
-
 function renderXPLog(){
 xpLog.innerHTML="";
-xpHistory.forEach(x=>{
-let d=document.createElement("div");
-d.textContent=x;
-xpLog.appendChild(d);
-});
+xpHistory.forEach(x=>{let d=document.createElement("div");d.textContent=x;xpLog.appendChild(d);});
 }
 
 function renderSystemLog(){
 systemLog.innerHTML="";
-systemHistory.forEach(s=>{
-let d=document.createElement("div");
-d.textContent=s;
-systemLog.appendChild(d);
-});
-}
-
-function save(){
-localStorage.setItem("xp",xp);
-localStorage.setItem("feed",JSON.stringify(posts));
-checkBadges();
-renderAll();
+systemHistory.forEach(s=>{let d=document.createElement("div");d.textContent=s;systemLog.appendChild(d);});
 }
 
 function resetAll(){
@@ -391,8 +282,7 @@ location.reload();
 }
 }
 
-if(localStorage.getItem("sparta_access")===deviceID()) start();
-else accessBox.classList.remove("hidden");
+renderAll();
 </script>
 
 </body>
