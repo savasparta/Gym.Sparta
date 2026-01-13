@@ -4,7 +4,6 @@
 <meta charset="UTF-8">
 <title>GYM SPARTA</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
 <link rel="apple-touch-icon" href="logo.png.PNG">
 <meta name="theme-color" content="#000000">
 
@@ -16,67 +15,31 @@
 --input:#1a1a1a;
 }
 body{
-margin:0;
-padding:20px;
-background:var(--dark);
-color:#fff;
-font-family:Arial,Helvetica,sans-serif;
-text-align:center;
+margin:0;padding:20px;background:var(--dark);color:#fff;
+font-family:Arial,Helvetica,sans-serif;text-align:center;
 }
 h1,h2,h3{color:var(--gold);}
 .logo{width:85%;max-width:260px;margin:20px auto;display:block}
-
 .card{
-background:var(--card);
-border:2px solid var(--gold);
-border-radius:18px;
-padding:18px;
-margin:18px auto;
-max-width:720px;
-text-align:left;
-box-sizing:border-box;
+background:var(--card);border:2px solid var(--gold);
+border-radius:18px;padding:18px;margin:18px auto;
+max-width:720px;text-align:left;box-sizing:border-box;
 }
-
 button{
-width:100%;
-padding:14px;
-margin-top:12px;
-background:var(--gold);
-color:#000;
-border:none;
-border-radius:12px;
-font-size:17px;
-font-weight:bold;
-cursor:pointer;
+width:100%;padding:14px;margin-top:12px;
+background:var(--gold);color:#000;border:none;
+border-radius:12px;font-size:17px;font-weight:bold;cursor:pointer;
 }
-
 input,select,textarea{
-width:100%;
-padding:14px;
-margin-top:10px;
-border-radius:12px;
-border:2px solid var(--gold);
-background:var(--input);
-color:#fff;
-font-size:16px;
+width:100%;padding:14px;margin-top:10px;
+border-radius:12px;border:2px solid var(--gold);
+background:var(--input);color:#fff;font-size:16px;
 box-sizing:border-box;
-outline:none;
 }
-input::placeholder, textarea::placeholder{color:#aaa}
-
 .hidden{display:none}
 .week{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;margin-top:10px}
-.day{
-border:1px solid var(--gold);
-border-radius:8px;
-padding:10px;
-font-size:12px;
-cursor:pointer;
-text-align:center;
-}
+.day{border:1px solid var(--gold);border-radius:8px;padding:10px;font-size:12px;cursor:pointer;text-align:center}
 .day.done{background:var(--gold);color:#000;font-weight:bold}
-.feedPost{border-bottom:1px solid var(--gold);padding:6px 0}
-.link{color:var(--gold);text-align:center;cursor:pointer;margin-top:12px}
 .footer{color:var(--gold);margin:30px 0;font-weight:bold;text-align:center}
 </style>
 </head>
@@ -86,35 +49,34 @@ text-align:center;
 <img src="logo.png.PNG" class="logo">
 <h1>🏛️ GYM SPARTA 🏛️</h1>
 
+<!-- RITUAL -->
+<div class="card" id="ritualBox">
+<h2>📜 Der Codex</h2>
+Disziplin schlägt Motivation.<br>
+Essen ist Training.<br>
+Konstanz ist alles.<br><br>
+<button onclick="enterApp()">⚔️ Eintreten</button>
+</div>
+
 <!-- START -->
-<div class="card" id="startBox">
-<h2>Willkommen Spartaner</h2>
+<div class="card hidden" id="startBox">
 <button onclick="startGuest()">🔥 Als Gast starten</button>
 <button onclick="showLogin()">⚔️ Spartan werden</button>
 </div>
 
-<!-- LOGIN -->
+<!-- LOGIN / REGISTER unverändert -->
 <div class="card hidden" id="loginBox">
-<h2>Login</h2>
 <input id="loginName" placeholder="Spartan Name">
 <input id="loginPass" type="password" placeholder="Passwort">
 <button onclick="login()">Einloggen</button>
-<div class="link" onclick="showRegister()">Registrieren</div>
+<div onclick="showRegister()" style="color:gold;text-align:center;cursor:pointer">Registrieren</div>
 </div>
 
-<!-- REGISTER -->
 <div class="card hidden" id="registerBox">
-<h2>Registrierung</h2>
 <input id="regName" placeholder="Spartan Name">
 <input id="regPass" type="password" placeholder="Passwort">
-<select id="regTitle">
-<option>Krieger</option>
-<option>Elite</option>
-<option>Legende</option>
-<option>Imperator</option>
-</select>
+<select id="regTitle"><option>Krieger</option><option>Elite</option><option>Legende</option></select>
 <button onclick="register()">Spartan werden</button>
-<div class="link" onclick="showLogin()">Zurück</div>
 </div>
 
 <!-- APP -->
@@ -122,17 +84,16 @@ text-align:center;
 <h2 id="welcome"></h2>
 
 <div class="card">
-<strong>📜 SPARTAN CODEX</strong><br><br>
-Disziplin schlägt Motivation.<br>
-Essen ist Training.<br>
-Konstanz ist alles.
+<strong>👤 PROFIL</strong><br>
+Rang: <span id="rank">Rekrut</span><br>
+Level: <span id="level">1</span> | XP: <span id="xp">0</span><br>
+🔥 Streak: <span id="streak">0</span>
 </div>
 
-<div class="card spartanOnly">
-<strong>👤 PROFIL</strong><br>
-Level: <span id="level">1</span><br>
-XP: <span id="xp">0</span><br>
-🔥 Streak: <span id="streak">0</span>
+<div class="card">
+<h3>⚔️ BEAST MODE</h3>
+<button onclick="toggleBeast()">Beast Mode starten</button>
+<p id="beastInfo"></p>
 </div>
 
 <div class="card">
@@ -140,14 +101,13 @@ XP: <span id="xp">0</span><br>
 <select id="planSelect" onchange="savePlan()">
 <option value="">– auswählen –</option>
 <option value="6">6 Tage ALL-IN</option>
-<option value="4">4 Tage Spartan Split</option>
-<option value="3">3 Tage Spartan Split</option>
+<option value="4">4 Tage Spartan</option>
+<option value="3">3 Tage Spartan</option>
 </select>
+<div id="planInfo"></div>
 </div>
 
-<div class="card hidden" id="planInfo"></div>
-
-<div class="card hidden spartanOnly" id="trackerBox">
+<div class="card">
 <h3>📅 Wochen-Tracker</h3>
 <div class="week" id="week"></div>
 </div>
@@ -159,122 +119,76 @@ XP: <span id="xp">0</span><br>
 <option value="bulk">Masse</option>
 <option value="lean">Lean Bulk</option>
 <option value="diet">Diät</option>
-<option value="hardcore">Hardcore Sparta</option>
+<option value="hardcore">Hardcore</option>
 </select>
-</div>
-
-<div class="card hidden" id="nutritionInfo"></div>
-
-<div class="card spartanOnly">
-<h3>👥 SPARTAN WALL</h3>
-<textarea id="postText" placeholder="Was hast du heute zerstört?"></textarea>
-<button onclick="addPost()">Posten</button>
-<div id="feed"></div>
-</div>
-
-<div class="card spartanOnly">
-<h3>🏆 LEADERBOARD</h3>
-<div id="leaderboard"></div>
+<div id="nutritionInfo"></div>
 </div>
 
 <button onclick="logout()">Logout</button>
 </div>
 
-<p class="footer">GYM-SPARTA · MASTER 14.0 🏛️</p>
+<p class="footer">GYM-SPARTA · OFFLINE ELITE 🏛️</p>
 
 <script>
-let isGuest=false;
 let xp=+localStorage.getItem("xp")||0;
 let streak=+localStorage.getItem("streak")||0;
+let beast=+localStorage.getItem("beast")||0;
 let days=JSON.parse(localStorage.getItem("week"))||[0,0,0,0,0,0,0];
-let posts=JSON.parse(localStorage.getItem("feed"))||[];
 
 const plans={
 6:"Mo Brust · Di Beine · Mi Arme · Do Rücken · Fr Brust/Schulter · Sa Pause · So Schulter/Nacken",
-4:"OK schwer · UK schwer · Pause · OK Volumen · UK Volumen",
+4:"OK · UK · Pause · OK · UK",
 3:"Oberkörper · Unterkörper · Push/Pull"
 };
+
 const nutrition={
-bulk:"🔥 Masse: Eier · Hafer · Reis · Fleisch · Quark · Nüsse",
-lean:"⚔️ Lean Bulk: Eier · Reis · Fisch · Skyr · Gemüse",
-diet:"☠️ Diät: Skyr · Fisch · Eier · Gemüse · Shake",
-hardcore:"🏛️ Hardcore: Fleisch · Eier · Wasser · Salz"
+bulk:"Früh: Hafer/Eier<br>Pre: Banane<br>Post: Reis/Fleisch<br>Abend: Quark",
+lean:"Früh: Eier<br>Post: Reis/Fisch<br>Abend: Skyr",
+diet:"Protein · Gemüse · Shake",
+hardcore:"Fleisch · Eier · Wasser · Salz"
 };
 
-function startGuest(){
-isGuest=true;
-startBox.classList.add("hidden");
-app.classList.remove("hidden");
-welcome.textContent="Willkommen Gast 🏛️";
-document.querySelectorAll(".spartanOnly").forEach(e=>e.classList.add("hidden"));
-}
-
+function enterApp(){ritualBox.classList.add("hidden");startBox.classList.remove("hidden")}
+function startGuest(){startBox.classList.add("hidden");app.classList.remove("hidden");welcome.textContent="Willkommen Spartaner"}
 function showLogin(){startBox.classList.add("hidden");loginBox.classList.remove("hidden")}
 function showRegister(){loginBox.classList.add("hidden");registerBox.classList.remove("hidden")}
-function register(){
-if(!regName.value||!regPass.value)return alert("Alles ausfüllen");
-localStorage.setItem("spartanUser",JSON.stringify({name:regName.value,pass:regPass.value,title:regTitle.value}));
-showLogin();
-}
+function register(){localStorage.setItem("spartanUser",JSON.stringify({name:regName.value,pass:regPass.value}));showLogin()}
 function login(){
 const u=JSON.parse(localStorage.getItem("spartanUser"));
-if(!u||loginName.value!==u.name||loginPass.value!==u.pass)return alert("Falsche Daten");
+if(!u||loginName.value!==u.name||loginPass.value!==u.pass)return alert("Falsch");
 start(u);
 }
 function start(u){
-startBox.classList.add("hidden");
-loginBox.classList.add("hidden");
-registerBox.classList.add("hidden");
-app.classList.remove("hidden");
-welcome.textContent=`Willkommen ${u.title} ${u.name} 🏛️`;
-renderWeek();renderFeed();updateProfile();renderLeaderboard();
+loginBox.classList.add("hidden");registerBox.classList.add("hidden");
+app.classList.remove("hidden");welcome.textContent="Willkommen "+u.name;
+renderWeek();updateProfile();
 }
 function logout(){location.reload()}
 
-function savePlan(){localStorage.setItem("plan",planSelect.value);planInfo.innerHTML=plans[planSelect.value];planInfo.classList.remove("hidden")}
-function saveNutrition(){localStorage.setItem("nutrition",nutritionSelect.value);nutritionInfo.innerHTML=nutrition[nutritionSelect.value];nutritionInfo.classList.remove("hidden")}
+function savePlan(){planInfo.innerHTML=plans[planSelect.value]}
+function saveNutrition(){nutritionInfo.innerHTML=nutrition[nutritionSelect.value]}
 
 function renderWeek(){
 week.innerHTML="";
 ["Mo","Di","Mi","Do","Fr","Sa","So"].forEach((d,i)=>{
 const el=document.createElement("div");
-el.className="day"+(days[i]?" done":"");
-el.textContent=d;
-el.onclick=()=>{
-days[i]=days[i]?0:1;
-xp+=days[i]?10:-10;
-streak=days[i]?streak+1:0;
-localStorage.setItem("xp",xp);
-localStorage.setItem("streak",streak);
-localStorage.setItem("week",JSON.stringify(days));
-updateProfile();renderWeek();
-};
+el.className="day"+(days[i]?" done":"");el.textContent=d;
+el.onclick=()=>{days[i]=days[i]?0:1;xp+=10;streak++;localStorage.setItem("xp",xp);updateProfile();renderWeek()};
 week.appendChild(el);
 });
 }
-function addPost(){
-if(!postText.value)return;
-posts.unshift(postText.value);
-localStorage.setItem("feed",JSON.stringify(posts));
-postText.value="";
-renderFeed();
+
+function toggleBeast(){
+beast=beast?0:30;
+localStorage.setItem("beast",beast);
+beastInfo.textContent=beast?"🔥 Beast Mode aktiv (30 Tage)":"Beast Mode aus";
 }
-function renderFeed(){
-feed.innerHTML="";
-posts.forEach(p=>{
-const d=document.createElement("div");
-d.className="feedPost";
-d.textContent=p;
-feed.appendChild(d);
-});
-}
+
 function updateProfile(){
 level.textContent=Math.floor(xp/100)+1;
-document.getElementById("xp").textContent=xp;
-document.getElementById("streak").textContent=streak;
-}
-function renderLeaderboard(){
-leaderboard.innerHTML="🥇 Leonidas – 1200 XP<br>🥈 Ares – 900 XP<br>🥉 SpartanX – 700 XP<br><b>Du:</b> "+xp+" XP";
+xpSpan=document.getElementById("xp");xpSpan.textContent=xp;
+streakSpan=document.getElementById("streak");streakSpan.textContent=streak;
+rank.textContent=level.textContent>10?"LEGIONÄR":level.textContent>5?"KRIEGER":"REKRUT";
 }
 </script>
 
