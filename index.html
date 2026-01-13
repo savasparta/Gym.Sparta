@@ -2,16 +2,17 @@
 <html lang="de">
 <head>
   <meta charset="UTF-8">
-  <title>Gym-Sparta</title>
+  <title>GYM SPARTA</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <style>
     body {
+      margin: 0;
+      padding: 20px;
       background: #000;
       color: #fff;
       font-family: Arial, sans-serif;
       text-align: center;
-      padding: 25px;
     }
 
     h1 {
@@ -19,54 +20,42 @@
       margin-bottom: 10px;
     }
 
-    h2 {
-      margin-top: 40px;
-      color: gold;
+    .logo {
+      max-width: 260px;
+      width: 80%;
+      margin: 20px auto;
+      display: block;
     }
 
-    /* Spartan Card */
     .card {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      text-align: center;
-
       border: 2px solid gold;
-      border-radius: 16px;
-      padding: 18px;
+      border-radius: 14px;
+      padding: 16px;
       margin: 14px 0;
-
       font-size: 18px;
-      cursor: pointer;
-      transition: 0.2s;
     }
 
-    /* Checkbox unsichtbar */
-    .card input {
-      position: absolute;
-      opacity: 0;
+    input[type="checkbox"] {
+      transform: scale(1.4);
+      margin-right: 10px;
     }
 
-    /* Aktiv = Gold */
-    .card:has(input:checked) {
-      background: gold;
-      color: black;
+    .footer {
+      margin-top: 30px;
+      color: gold;
       font-weight: bold;
-    }
-
-    .motivation {
-      margin: 25px 0;
-      font-size: 16px;
     }
   </style>
 </head>
 
 <body>
 
-  <h1>🏛️ GYM-SPARTA 🏛️</h1>
+  <!-- LOGO -->
+  <img src="logo.png.PNG" alt="Gym Sparta Logo" class="logo">
+
+  <h1>🏛️ GYM SPARTA 🏛️</h1>
   <p><strong>Auuu!</strong> Zieh durch, Malaka 💪</p>
 
-  <!-- Spartan Daily Flow -->
   <label class="card">
     <input type="checkbox">
     🥣 Frühstück – sauber essen
@@ -97,17 +86,8 @@
     🌙 500g Quark + Honig / Nüsse / Banane
   </label>
 
-  <div class="motivation">
-    🔥 Ziel: 200–250g Protein pro Tag 🔥<br>
-    Malaka… weiter so 💪 Auuu!
-  </div>
-
-  <h2>⚔️ Sparta Mentalität</h2>
-  <p>
-    Keine Motivation.<br>
-    Keine Ausreden.<br>
-    <strong>Disziplin.</strong>
-  </p>
+  <p class="footer">🔥 Ziel: 200–250g Protein pro Tag 🔥</p>
+  <p class="footer">Malaka… weiter so 💪 Auuu!</p>
 
 </body>
 </html>
