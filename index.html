@@ -5,78 +5,68 @@
 <title>GYM SPARTA</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<!-- APP INSTALL -->
 <link rel="apple-touch-icon" href="logo.png.PNG">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="theme-color" content="#000000">
 
 <style>
 body {
-  margin: 0;
-  padding: 20px;
-  background: #000;
-  color: #fff;
-  font-family: Arial, sans-serif;
-  text-align: center;
+  background:#000;
+  color:#fff;
+  font-family:Arial, sans-serif;
+  padding:20px;
+  text-align:center;
 }
-
-h1, h2 {
-  color: gold;
-}
-
+h1,h2 { color:gold; }
 .logo {
-  max-width: 260px;
-  width: 80%;
-  margin: 20px auto;
-  display: block;
+  max-width:260px;
+  width:80%;
+  margin:20px auto;
+  display:block;
 }
-
 .card {
-  border: 2px solid gold;
-  border-radius: 14px;
-  padding: 16px;
-  margin: 14px 0;
-  font-size: 17px;
-  text-align: left;
+  border:2px solid gold;
+  border-radius:14px;
+  padding:16px;
+  margin:14px 0;
+  text-align:left;
 }
-
-input[type="checkbox"] {
-  transform: scale(1.4);
-  margin-right: 10px;
-}
-
 button {
-  width: 100%;
-  background: gold;
-  color: black;
-  border: none;
-  padding: 14px;
-  border-radius: 12px;
-  font-size: 18px;
-  font-weight: bold;
-  margin-top: 15px;
+  width:100%;
+  padding:14px;
+  background:gold;
+  border:none;
+  border-radius:12px;
+  font-size:18px;
+  font-weight:bold;
+  margin-top:10px;
 }
-
-.hidden { display: none; }
-
+input[type="checkbox"] {
+  transform:scale(1.4);
+  margin-right:10px;
+}
 .progress-box {
-  border: 2px solid gold;
-  border-radius: 12px;
-  padding: 10px;
-  margin: 20px 0;
+  border:2px solid gold;
+  border-radius:12px;
+  padding:10px;
+  margin:20px 0;
 }
-
 .progress-bar {
-  height: 20px;
-  background: gold;
-  width: 0%;
-  border-radius: 10px;
+  height:20px;
+  background:gold;
+  width:0%;
+  border-radius:10px;
 }
-
+.hidden { display:none; }
 .footer {
-  margin-top: 30px;
-  color: gold;
-  font-weight: bold;
+  color:gold;
+  margin-top:30px;
+  font-weight:bold;
+}
+.level {
+  font-size:20px;
+  color:gold;
+  margin-top:10px;
 }
 </style>
 </head>
@@ -89,9 +79,9 @@ button {
 
 <div class="card">
 <strong>Sparta-Mentalität</strong><br><br>
-Hartes Training. Keine Ausreden.<br>
-Disziplin schlägt Motivation.<br>
-Jeder Tag zählt.
+Keine Ausreden.<br>
+Disziplin vor Motivation.<br>
+Heute stärker als gestern.
 </div>
 
 <h2>🔥 Daily Checklist</h2>
@@ -99,7 +89,7 @@ Jeder Tag zählt.
 <label class="card"><input type="checkbox" id="task1"> 🥣 Frühstück clean</label>
 <label class="card"><input type="checkbox" id="task2"> 🍗 Proteinreich essen</label>
 <label class="card"><input type="checkbox" id="task3"> 🍌 Pre-Workout Fokus</label>
-<label class="card"><input type="checkbox" id="task4"> 🏋️ Training durchgezogen</label>
+<label class="card"><input type="checkbox" id="task4"> 🏋️ Training erledigt</label>
 <label class="card"><input type="checkbox" id="task5"> 🥛 Post-Workout Shake</label>
 <label class="card"><input type="checkbox" id="task6"> 🌙 500g Quark</label>
 
@@ -108,19 +98,10 @@ Jeder Tag zählt.
 <div class="progress-bar" id="progressBar"></div>
 </div>
 
-<button onclick="resetDay()">🔁 Tag zurücksetzen</button>
+<div class="level" id="levelText"></div>
+<div class="level">🔥 Streak: <span id="streak">0</span> Tage</div>
 
-<h2>📆 Wochen-Tracker</h2>
-
-<label class="card"><input type="checkbox" id="day1"> Montag</label>
-<label class="card"><input type="checkbox" id="day2"> Dienstag</label>
-<label class="card"><input type="checkbox" id="day3"> Mittwoch</label>
-<label class="card"><input type="checkbox" id="day4"> Donnerstag</label>
-<label class="card"><input type="checkbox" id="day5"> Freitag</label>
-<label class="card"><input type="checkbox" id="day6"> Samstag</label>
-<label class="card"><input type="checkbox" id="day7"> Sonntag</label>
-
-<button onclick="resetWeek()">🔁 Woche zurücksetzen</button>
+<button onclick="resetDay()">🔁 Neuer Tag</button>
 
 <h2>🏋️ Trainingspläne</h2>
 
@@ -145,50 +126,69 @@ Beine<br>
 Schulter-Nacken
 </div>
 
-<p class="footer">Auuu! 💪 Gym-Sparta 2.0</p>
+<p class="footer">Auuu! 💪 Gym-Sparta 3.0</p>
+
+<audio id="ding">
+  <source src="https://actions.google.com/sounds/v1/cartoon/clang_and_wobble.ogg">
+</audio>
 
 <script>
-const boxes = document.querySelectorAll('input[type="checkbox"]');
+const tasks = document.querySelectorAll('input[type="checkbox"]');
 const bar = document.getElementById('progressBar');
+const levelText = document.getElementById('levelText');
+const streakEl = document.getElementById('streak');
+const sound = document.getElementById('ding');
 
-function updateProgress() {
-  const daily = [...boxes].slice(0,6);
-  const done = daily.filter(b => b.checked).length;
-  bar.style.width = (done / daily.length) * 100 + '%';
+let xp = Number(localStorage.getItem('xp')) || 0;
+let streak = Number(localStorage.getItem('streak')) || 0;
+
+function update() {
+  const done = [...tasks].filter(t => t.checked).length;
+  bar.style.width = (done / tasks.length) * 100 + '%';
+
+  levelText.innerText = "🏅 Level: " + getLevel(xp);
+  streakEl.innerText = streak;
 }
 
-boxes.forEach(b => {
-  b.checked = localStorage.getItem(b.id) === 'true';
-  b.addEventListener('change', () => {
-    localStorage.setItem(b.id, b.checked);
-    updateProgress();
+function getLevel(xp) {
+  if (xp < 50) return "Rekrut";
+  if (xp < 150) return "Krieger";
+  if (xp < 300) return "Elite";
+  return "LEGENDÄR";
+}
+
+tasks.forEach(t => {
+  t.checked = localStorage.getItem(t.id) === 'true';
+  t.addEventListener('change', () => {
+    localStorage.setItem(t.id, t.checked);
+    if (t.checked) {
+      xp += 5;
+      sound.play();
+    }
+    localStorage.setItem('xp', xp);
+    update();
   });
 });
 
 function resetDay() {
-  boxes.forEach(b => {
-    if (b.id.startsWith("task")) {
-      b.checked = false;
-      localStorage.setItem(b.id, false);
-    }
-  });
-  updateProgress();
-}
+  const allDone = [...tasks].every(t => t.checked);
+  if (allDone) streak++;
+  else streak = 0;
 
-function resetWeek() {
-  boxes.forEach(b => {
-    if (b.id.startsWith("day")) {
-      b.checked = false;
-      localStorage.setItem(b.id, false);
-    }
+  localStorage.setItem('streak', streak);
+
+  tasks.forEach(t => {
+    t.checked = false;
+    localStorage.setItem(t.id, false);
   });
+  update();
 }
 
 function toggle(id) {
   document.getElementById(id).classList.toggle('hidden');
 }
 
-updateProgress();
+update();
 </script>
 
 </body>
