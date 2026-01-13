@@ -4,7 +4,6 @@
 <meta charset="UTF-8">
 <title>GYM SPARTA – OFFLINE MASTER</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
 <link rel="apple-touch-icon" href="logo.png.PNG">
 <meta name="theme-color" content="#000000">
 
@@ -15,6 +14,7 @@
 --card:#111;
 --input:#1a1a1a;
 --danger:#a00000;
+--ok:#0a7a2f;
 }
 
 body{
@@ -27,13 +27,7 @@ text-align:center;
 }
 
 h1,h2,h3{color:var(--gold);}
-
-.logo{
-width:85%;
-max-width:260px;
-margin:20px auto;
-display:block;
-}
+.logo{width:85%;max-width:260px;margin:20px auto;display:block;}
 
 .card{
 background:var(--card);
@@ -43,7 +37,6 @@ padding:18px;
 margin:18px auto;
 max-width:720px;
 text-align:left;
-box-sizing:border-box;
 }
 
 button{
@@ -56,12 +49,6 @@ border:none;
 border-radius:12px;
 font-size:17px;
 font-weight:bold;
-cursor:pointer;
-}
-
-button.danger{
-background:var(--danger);
-color:#fff;
 }
 
 input,select,textarea{
@@ -73,54 +60,14 @@ border:2px solid var(--gold);
 background:var(--input);
 color:#fff;
 font-size:16px;
-box-sizing:border-box;
-outline:none;
 }
 
 .hidden{display:none}
 
-.week{
-display:grid;
-grid-template-columns:repeat(7,1fr);
-gap:6px;
-margin-top:10px;
-}
+.status-ok{color:#6fff95;font-weight:bold;}
+.status-bad{color:#ff6f6f;font-weight:bold;}
 
-.day{
-border:1px solid var(--gold);
-border-radius:8px;
-padding:10px;
-font-size:12px;
-cursor:pointer;
-text-align:center;
-}
-
-.day.done{
-background:var(--gold);
-color:#000;
-font-weight:bold;
-}
-
-.feedPost{
-border-bottom:1px solid var(--gold);
-padding:6px 0;
-font-size:14px;
-}
-
-.badge{
-display:inline-block;
-border:1px solid var(--gold);
-border-radius:8px;
-padding:6px 10px;
-margin:4px;
-font-size:12px;
-}
-
-.footer{
-color:var(--gold);
-margin:30px 0;
-font-weight:bold;
-}
+.footer{color:var(--gold);margin:30px 0;font-weight:bold;}
 </style>
 </head>
 
@@ -131,9 +78,8 @@ font-weight:bold;
 
 <div class="card hidden" id="accessBox">
 <h2>⚔️ Spartan Zugang</h2>
-<p>Ein Code. Ein Gerät. Ein Krieger.</p>
 <input id="accessCode" placeholder="Sparta-Code">
-<input id="spartaName" placeholder="Dein Spartan Name">
+<input id="spartaName" placeholder="Spartan Name">
 <button onclick="unlock()">Eintreten</button>
 </div>
 
@@ -141,10 +87,13 @@ font-weight:bold;
 <h2 id="welcome"></h2>
 
 <div class="card">
-<strong>📜 SPARTAN CODEX</strong><br><br>
-Disziplin schlägt Motivation.<br>
-Essen ist Training.<br>
-Konstanz ist Loyalität.<br>
+<h3>🛡️ SYSTEM STATUS</h3>
+Gerät: <span id="deviceStatus" class="status-ok">Gebunden</span><br>
+Modus: <span class="status-ok">Offline</span><br>
+Letzte Aktion: <span id="lastAction">–</span><br>
+Aktiver Plan: <span id="activePlan">–</span><br>
+Ernährung: <span id="activeFood">–</span><br>
+Letzter Tag aktiv: <span id="lastDay">–</span>
 </div>
 
 <div class="card">
@@ -155,72 +104,65 @@ XP: <span id="xp">0</span><br>
 </div>
 
 <div class="card">
-<h3>🏅 ERFOLGE</h3>
-<div id="badgesBox"></div>
+<h3>📜 XP-CHRONIK</h3>
+<div id="xpLog"></div>
 </div>
 
 <div class="card">
-<h3>🔥 BEAST MODE – 30 TAGE</h3>
-<p id="beastStatus"></p>
-<button onclick="startBeast()">Beast starten</button>
-<div id="beastTasks" class="hidden">
-<label><input type="checkbox" id="bmTrain"> Training</label><br>
-<label><input type="checkbox" id="bmFood"> Ernährung</label><br>
-<label><input type="checkbox" id="bmCodex"> Codex</label>
-<button onclick="completeBeastDay()">Tag abschließen</button>
+<h3>📡 SYSTEM LOG</h3>
+<div id="systemLog"></div>
 </div>
+
+<div class="card">
+<h3>🏅 ERFOLGE</h3>
+<div id="badgesBox"></div>
 </div>
 
 <div class="card">
 <h3>🏋️ TRAININGSPLAN</h3>
 <select id="planSelect" onchange="savePlan()">
 <option value="">– auswählen –</option>
-<option value="6">6 Tage ALL-IN</option>
-<option value="4">4 Tage Spartan Split</option>
-<option value="3">3 Tage Spartan Split</option>
+<option value="6 Tage ALL-IN">6 Tage ALL-IN</option>
+<option value="4 Tage Spartan Split">4 Tage Spartan Split</option>
+<option value="3 Tage Spartan Split">3 Tage Spartan Split</option>
 </select>
-</div>
-
-<div class="card hidden" id="planInfo"></div>
-
-<div class="card hidden" id="trackerBox">
-<h3>📅 Wochen-Tracker</h3>
-<div class="week" id="week"></div>
 </div>
 
 <div class="card">
 <h3>🥗 ERNÄHRUNG</h3>
-<select id="nutritionSelect" onchange="saveNutrition()">
+<select id="foodSelect" onchange="saveFood()">
 <option value="">– auswählen –</option>
-<option value="bulk">Masse</option>
-<option value="lean">Lean Bulk</option>
-<option value="diet">Diät</option>
-<option value="hardcore">Hardcore</option>
+<option value="Masse">Masse</option>
+<option value="Lean Bulk">Lean Bulk</option>
+<option value="Diät">Diät</option>
+<option value="Hardcore">Hardcore</option>
 </select>
 </div>
 
-<div class="card hidden" id="nutritionInfo"></div>
-
 <div class="card">
 <h3>📓 LOGBUCH</h3>
-<textarea id="postText" placeholder="Was hast du heute zerstört?"></textarea>
+<textarea id="postText"></textarea>
 <button onclick="addPost()">Speichern</button>
 <div id="feed"></div>
 </div>
 
-<div class="card">
-<h3>🏆 LEGENDE</h3>
-<div id="leaderboard"></div>
+<button class="danger" onclick="resetAll()">⚠️ RESET</button>
 </div>
 
-<button class="danger" onclick="resetAll()">⚠️ RESET (NUR DU)</button>
-</div>
-
-<p class="footer">GYM-SPARTA · OFFLINE · MASTER BUILD 🏛️</p>
+<p class="footer">GYM-SPARTA · OFFLINE · OPTION B BUILD 🏛️</p>
 
 <script>
 const MASTER_CODE="SPARTA-ELITE";
 const DEVICE_ID_KEY="sparta_device";
+
+let xp=+localStorage.getItem("xp")||0;
+let streak=+localStorage.getItem("streak")||0;
+let posts=JSON.parse(localStorage.getItem("feed"))||[];
+let badges=JSON.parse(localStorage.getItem("badges"))||[];
+let xpHistory=JSON.parse(localStorage.getItem("xpHistory"))||[];
+let systemHistory=JSON.parse(localStorage.getItem("systemHistory"))||[];
+let lastAction=localStorage.getItem("lastAction")||"–";
+let lastDay=localStorage.getItem("lastDay")||"–";
 
 function deviceID(){
 if(!localStorage.getItem(DEVICE_ID_KEY))
@@ -230,131 +172,133 @@ return localStorage.getItem(DEVICE_ID_KEY);
 
 function unlock(){
 if(accessCode.value!==MASTER_CODE) return alert("Falscher Code");
-if(!spartaName.value) return alert("Name fehlt");
 localStorage.setItem("sparta_access",deviceID());
 localStorage.setItem("sparta_name",spartaName.value);
 start();
 }
 
 function start(){
-if(localStorage.getItem("sparta_access")!==deviceID()) return;
+if(localStorage.getItem("sparta_access")!==deviceID()){
+document.getElementById("deviceStatus").textContent="BLOCKIERT";
+document.getElementById("deviceStatus").className="status-bad";
+return;
+}
 accessBox.classList.add("hidden");
 app.classList.remove("hidden");
 welcome.textContent="Willkommen "+localStorage.getItem("sparta_name");
-loadSelections();
+dailyCheck();
 renderAll();
 }
 
-let xp=+localStorage.getItem("xp")||0;
-let streak=+localStorage.getItem("streak")||0;
-let days=JSON.parse(localStorage.getItem("week"))||[0,0,0,0,0,0,0];
-let posts=JSON.parse(localStorage.getItem("feed"))||[];
-let badges=JSON.parse(localStorage.getItem("badges"))||[];
-
-const plans={
-6:"Mo Brust · Di Beine · Mi Arme · Do Rücken · Fr Brust/Schulter · Sa Pause · So Schulter",
-4:"OK schwer · UK schwer · Pause · OK Volumen · UK Volumen",
-3:"Oberkörper · Unterkörper · Push/Pull"
-};
-
-const nutrition={
-bulk:"🔥 3500-4000 kcal · High Carb",
-lean:"⚔️ 3000 kcal · Clean",
-diet:"☠️ 2200 kcal · Defizit",
-hardcore:"🏛️ Fleisch · Eier · Wasser"
-};
-
-function savePlan(){
-localStorage.setItem("plan",planSelect.value);
-planInfo.textContent=plans[planSelect.value];
-planInfo.classList.remove("hidden");
-trackerBox.classList.remove("hidden");
-}
-
-function saveNutrition(){
-localStorage.setItem("nutrition",nutritionSelect.value);
-nutritionInfo.textContent=nutrition[nutritionSelect.value];
-nutritionInfo.classList.remove("hidden");
-}
-
-function loadSelections(){
-if(localStorage.getItem("plan")){
-planSelect.value=localStorage.getItem("plan");
-savePlan();
-}
-if(localStorage.getItem("nutrition")){
-nutritionSelect.value=localStorage.getItem("nutrition");
-saveNutrition();
+function dailyCheck(){
+const today=new Date().toLocaleDateString();
+if(lastDay!==today){
+streak++;
+logSystem("Neuer Tag · Streak erhöht");
+lastDay=today;
+localStorage.setItem("lastDay",today);
+localStorage.setItem("streak",streak);
 }
 }
 
-function renderWeek(){
-week.innerHTML="";
-["Mo","Di","Mi","Do","Fr","Sa","So"].forEach((d,i)=>{
-let el=document.createElement("div");
-el.className="day"+(days[i]?" done":"");
-el.textContent=d;
-el.onclick=()=>{
-days[i]=days[i]?0:1;
-xp+=days[i]?15:-15;
-streak=days[i]?streak+1:0;
-save();
-};
-week.appendChild(el);
-});
+function logXP(amount,reason){
+xp+=amount;
+xpHistory.unshift(new Date().toLocaleDateString()+" · "+reason+" ("+amount+" XP)");
+localStorage.setItem("xpHistory",JSON.stringify(xpHistory));
+lastAction=reason;
+localStorage.setItem("lastAction",reason);
+}
+
+function logSystem(text){
+systemHistory.unshift(new Date().toLocaleString()+" · "+text);
+localStorage.setItem("systemHistory",JSON.stringify(systemHistory));
 }
 
 function addPost(){
 if(!postText.value) return;
 posts.unshift("🗡️ "+postText.value);
-xp+=5;
+logXP(5,"Logbuch");
+logSystem("Logbuch-Eintrag");
 postText.value="";
 save();
+}
+
+function savePlan(){
+localStorage.setItem("activePlan",planSelect.value);
+logSystem("Trainingsplan gesetzt");
+renderAll();
+}
+
+function saveFood(){
+localStorage.setItem("activeFood",foodSelect.value);
+logSystem("Ernährung gesetzt");
+renderAll();
+}
+
+function checkBadges(){
+if(xp>=500 && !badges.includes("Krieger")) badges.push("Krieger");
+if(streak>=7 && !badges.includes("Blutwoche")) badges.push("Blutwoche");
+if(Math.floor(xp/100)+1>=10 && !badges.includes("Veteran")) badges.push("Veteran");
+if(posts.length>=25 && !badges.includes("Schreiber")) badges.push("Schreiber");
+localStorage.setItem("badges",JSON.stringify(badges));
+}
+
+function renderAll(){
+level.textContent=Math.floor(xp/100)+1;
+xpSpan=document.getElementById("xp");
+xpSpan.textContent=xp;
+document.getElementById("streak").textContent=streak;
+document.getElementById("lastAction").textContent=lastAction;
+document.getElementById("activePlan").textContent=localStorage.getItem("activePlan")||"–";
+document.getElementById("activeFood").textContent=localStorage.getItem("activeFood")||"–";
+document.getElementById("lastDay").textContent=lastDay;
+renderFeed();
+renderBadges();
+renderXPLog();
+renderSystemLog();
 }
 
 function renderFeed(){
 feed.innerHTML="";
 posts.forEach(p=>{
 let d=document.createElement("div");
-d.className="feedPost";
 d.textContent=p;
 feed.appendChild(d);
 });
-}
-
-function checkBadges(){
-if(xp>=500 && !badges.includes("Krieger")) badges.push("Krieger");
-if(streak>=7 && !badges.includes("Disziplin")) badges.push("Disziplin");
-localStorage.setItem("badges",JSON.stringify(badges));
 }
 
 function renderBadges(){
 badgesBox.innerHTML="";
 badges.forEach(b=>{
 let d=document.createElement("div");
-d.className="badge";
 d.textContent=b;
 badgesBox.appendChild(d);
 });
 }
 
+function renderXPLog(){
+xpLog.innerHTML="";
+xpHistory.forEach(x=>{
+let d=document.createElement("div");
+d.textContent=x;
+xpLog.appendChild(d);
+});
+}
+
+function renderSystemLog(){
+systemLog.innerHTML="";
+systemHistory.forEach(s=>{
+let d=document.createElement("div");
+d.textContent=s;
+systemLog.appendChild(d);
+});
+}
+
 function save(){
 localStorage.setItem("xp",xp);
-localStorage.setItem("streak",streak);
-localStorage.setItem("week",JSON.stringify(days));
 localStorage.setItem("feed",JSON.stringify(posts));
 checkBadges();
 renderAll();
-}
-
-function renderAll(){
-level.textContent=Math.floor(xp/100)+1;
-document.getElementById("xp").textContent=xp;
-document.getElementById("streak").textContent=streak;
-renderWeek();
-renderFeed();
-renderBadges();
-leaderboard.innerHTML="🥇 Leonidas · 3200 XP<br>🥈 Ares · 2400 XP<br><b>Du:</b> "+xp+" XP";
 }
 
 function resetAll(){
