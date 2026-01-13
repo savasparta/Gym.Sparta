@@ -2,12 +2,11 @@
 <html lang="de">
 <head>
 <meta charset="UTF-8">
-<title>GYM SPARTA – OFFLINE MASTER CORE</title>
+<title>GYM SPARTA – MASTER GOD MODE</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<link rel="apple-touch-icon" href="logo.png.PNG">
-<meta name="theme-color" content="#000000">
 
 <style>
+/* ================= THEME ================= */
 :root{
 --gold:#d4af37;
 --dark:#000;
@@ -16,44 +15,47 @@
 --danger:#a00000;
 --ok:#0a7a2f;
 --warn:#ff9800;
+--glow:0 0 12px rgba(212,175,55,.6);
 }
 
 body{
 margin:0;
 padding:20px;
-background:var(--dark);
+background:radial-gradient(circle at top,#111,#000 70%);
 color:#fff;
 font-family:Arial,Helvetica,sans-serif;
 text-align:center;
 }
 
-h1,h2,h3{color:var(--gold);}
-.logo{width:85%;max-width:260px;margin:20px auto;display:block;}
-
+h1,h2,h3{color:var(--gold);text-shadow:var(--glow);}
 .card{
-background:var(--card);
+background:linear-gradient(145deg,#111,#000);
 border:2px solid var(--gold);
 border-radius:18px;
 padding:18px;
-margin:18px auto;
-max-width:760px;
+margin:20px auto;
+max-width:820px;
 text-align:left;
+box-shadow:var(--glow);
+animation:fadeIn .6s ease;
 }
 
 button{
 width:100%;
 padding:14px;
 margin-top:12px;
-background:var(--gold);
+background:linear-gradient(145deg,#ffd700,#b8962e);
 color:#000;
 border:none;
 border-radius:12px;
 font-size:17px;
 font-weight:bold;
 cursor:pointer;
+transition:.2s;
 }
 
-button.danger{background:var(--danger);color:#fff;}
+button:hover{transform:scale(1.03);box-shadow:var(--glow);}
+button.danger{background:#8b0000;color:#fff;}
 
 input,select,textarea{
 width:100%;
@@ -69,7 +71,6 @@ font-size:16px;
 .hidden{display:none}
 .status-ok{color:#6fff95;font-weight:bold;}
 .status-bad{color:#ff6f6f;font-weight:bold;}
-.status-warn{color:var(--warn);font-weight:bold;}
 
 .week,.month{
 display:grid;
@@ -85,184 +86,264 @@ padding:10px;
 font-size:12px;
 cursor:pointer;
 text-align:center;
+transition:.2s;
 }
 
+.day:hover{box-shadow:var(--glow);}
 .day.done{background:var(--gold);color:#000;font-weight:bold;}
-.day.today{outline:2px solid #6fff95;}
 
-.rank{
-padding:8px;
-border-radius:10px;
-font-weight:bold;
-text-align:center;
-margin-top:8px;
+@keyframes fadeIn{
+from{opacity:0;transform:translateY(10px);}
+to{opacity:1;}
 }
-
-.footer{color:var(--gold);margin:40px 0;font-weight:bold;}
 </style>
 </head>
 
 <body>
 
-<img src="logo.png.PNG" class="logo">
 <h1>🏛️ GYM SPARTA 🏛️</h1>
 
-<div class="card hidden" id="accessBox">
-<h2>⚔️ Spartan Zugang</h2>
-<input id="accessCode" placeholder="Sparta-Code">
+<!-- ACCESS -->
+<div class="card" id="accessBox">
+<h3>⚔️ Spartan Zugang</h3>
+<input id="accessCode" placeholder="MASTER CODE">
 <input id="spartaName" placeholder="Spartan Name">
-<button onclick="unlock()">Eintreten</button>
+<button onclick="unlock()">EINTRETEN</button>
 </div>
 
 <div class="hidden" id="app">
-<h2 id="welcome"></h2>
 
-<div class="card">
-<h3>🧠 SPARTAN COACH</h3>
-<div id="coachQuote" style="font-weight:bold;margin-bottom:10px;"></div>
-<div id="coachRule" style="font-size:14px;opacity:0.9;"></div>
-</div>
-
+<!-- STATUS -->
 <div class="card">
 <h3>🛡️ SYSTEM STATUS</h3>
-Gerät: <span id="deviceStatus" class="status-ok">Gebunden</span><br>
-Modus: <span class="status-ok">Offline</span><br>
-Rang: <span id="rankText"></span><br>
-Letzte Aktion: <span id="lastAction">–</span><br>
-Aktiver Plan: <span id="activePlan">–</span><br>
-Ernährung: <span id="activeFood">–</span><br>
-Letzter aktiver Tag: <span id="lastDay">–</span>
+Rang: <span id="rank"></span><br>
+Level: <span id="level"></span><br>
+XP: <span id="xp"></span><br>
+🔥 Streak: <span id="streak"></span><br>
+Letzte Aktion: <span id="lastAction"></span>
 </div>
 
+<!-- COACH -->
 <div class="card">
-<h3>👤 PROFIL</h3>
-Level: <span id="level">1</span><br>
-XP: <span id="xp">0</span><br>
-🔥 Streak: <span id="streak">0</span>
-<div id="rankBox" class="rank"></div>
+<h3>🧠 SPARTAN COACH</h3>
+<div id="coachText"></div>
 </div>
 
+<!-- BEAST MODE -->
 <div class="card">
-<h3>🔥 BEAST MODE – 30 TAGE</h3>
-Status: <span id="beastStatus">Nicht aktiv</span><br>
+<h3>🔥 BEAST MODE</h3>
+Status: <span id="beastStatus"></span>
 <button onclick="startBeast()">Beast starten</button>
 <div id="beastBox" class="hidden">
-<label><input type="checkbox" id="bmTrain"> Training</label><br>
-<label><input type="checkbox" id="bmFood"> Ernährung</label><br>
-<label><input type="checkbox" id="bmSleep"> Schlaf</label><br>
-<button onclick="completeBeastDay()">Tag abschließen</button>
+<label><input type="checkbox" id="bTrain"> Training</label><br>
+<label><input type="checkbox" id="bFood"> Ernährung</label><br>
+<label><input type="checkbox" id="bSleep"> Schlaf</label><br>
+<button onclick="finishBeast()">Tag abschließen</button>
 </div>
 </div>
 
+<!-- WEEK -->
 <div class="card">
-<h3>📅 WOCHEN-TRACKER</h3>
+<h3>📅 WOCHENPLAN</h3>
 <div class="week" id="week"></div>
 </div>
 
+<!-- MONTH -->
 <div class="card">
-<h3>🗓️ MONATS-KALENDER</h3>
+<h3>🗓️ MONAT</h3>
 <div class="month" id="month"></div>
 </div>
 
+<!-- TRAINING -->
 <div class="card">
-<h3>📜 XP-CHRONIK</h3>
-<div id="xpLog"></div>
-</div>
-
-<div class="card">
-<h3>📡 SYSTEM LOG</h3>
-<div id="systemLog"></div>
-</div>
-
-<div class="card">
-<h3>🏅 ERFOLGE</h3>
-<div id="badgesBox"></div>
-</div>
-
-<div class="card">
-<h3>🏋️ TRAININGSPLAN</h3>
-<select id="planSelect" onchange="savePlan()">
-<option value="">– auswählen –</option>
-<option>6 Tage ALL-IN</option>
-<option>4 Tage Spartan Split</option>
-<option>3 Tage Spartan Split</option>
+<h3>🏋️ TRAINING</h3>
+<select id="trainingType">
+<option>Push</option>
+<option>Pull</option>
+<option>Legs</option>
+<option>Fullbody</option>
 </select>
+<button onclick="logTraining()">Training loggen</button>
 </div>
 
+<!-- FOOD -->
 <div class="card">
 <h3>🥗 ERNÄHRUNG</h3>
-<select id="foodSelect" onchange="saveFood()">
-<option value="">– auswählen –</option>
+<select id="foodMode">
 <option>Masse</option>
 <option>Lean Bulk</option>
 <option>Diät</option>
-<option>Hardcore</option>
 </select>
+<button onclick="logFood()">Speichern</button>
 </div>
 
+<!-- LOGBOOK -->
 <div class="card">
 <h3>📓 LOGBUCH</h3>
-<textarea id="postText"></textarea>
-<button onclick="addPost()">Speichern</button>
+<textarea id="logText"></textarea>
+<button onclick="addLog()">Eintrag</button>
 <div id="feed"></div>
 </div>
 
-<!-- 📦 BACKUP CARD (NEU) -->
+<!-- BACKUP -->
 <div class="card">
-<h3>📦 BACKUP & WIEDERHERSTELLUNG</h3>
-<button onclick="exportData()">⬇️ Backup exportieren</button>
-<input type="file" id="importFile" accept=".json" style="margin-top:12px;">
-<button onclick="importData()">⬆️ Backup importieren</button>
-<p style="font-size:13px;opacity:0.8;margin-top:10px;">
-⚠️ Import überschreibt den aktuellen Zustand komplett.
-</p>
+<h3>📦 BACKUP</h3>
+<button onclick="exportData()">⬇️ Export</button>
+<input type="file" id="importFile">
+<button onclick="importData()">⬆️ Import</button>
 </div>
 
 <button class="danger" onclick="resetAll()">⚠️ RESET</button>
 </div>
 
-<p class="footer">GYM-SPARTA · OFFLINE · MASTER CORE 🏛️</p>
-
 <script>
-/* ================= BACKUP SYSTEM ================= */
+/* ================= CORE ================= */
+const MASTER_CODE="SPARTA-ELITE";
+let xp=+localStorage.getItem("xp")||0;
+let streak=+localStorage.getItem("streak")||0;
+let lastAction=localStorage.getItem("lastAction")||"–";
+let beastDay=+localStorage.getItem("beastDay")||0;
+let logs=JSON.parse(localStorage.getItem("logs"))||[];
+let weekDays=JSON.parse(localStorage.getItem("weekDays"))||[0,0,0,0,0,0,0];
+let monthDays=JSON.parse(localStorage.getItem("monthDays"))||{};
 
+function unlock(){
+if(accessCode.value!==MASTER_CODE) return alert("Falscher Code");
+localStorage.setItem("name",spartaName.value);
+accessBox.classList.add("hidden");
+app.classList.remove("hidden");
+render();
+}
+
+function rank(){
+if(xp<100) return "Rekrut";
+if(xp<300) return "Hoplit";
+if(xp<700) return "Krieger";
+if(xp<1200) return "Veteran";
+return "LEGENDÄR";
+}
+
+function addXP(v,txt){
+xp+=v;
+lastAction=txt;
+localStorage.setItem("xp",xp);
+localStorage.setItem("lastAction",txt);
+}
+
+function render(){
+rank.textContent=rank();
+level.textContent=Math.floor(xp/100)+1;
+xp.textContent=xp;
+streak.textContent=streak;
+lastAction.textContent=lastAction;
+coachText.textContent=[
+"Disziplin schlägt Motivation.",
+"Sparta erwartet Leistung.",
+"Schmerz formt Legenden."
+][new Date().getDate()%3];
+renderWeek();
+renderMonth();
+renderFeed();
+beastStatus.textContent=beastDay?`Tag ${beastDay}/30`:"Inaktiv";
+beastBox.classList.toggle("hidden",!beastDay);
+}
+
+/* WEEK / MONTH */
+function renderWeek(){
+week.innerHTML="";
+["Mo","Di","Mi","Do","Fr","Sa","So"].forEach((d,i)=>{
+let el=document.createElement("div");
+el.className="day"+(weekDays[i]?" done":"");
+el.textContent=d;
+el.onclick=()=>{
+weekDays[i]^=1;
+addXP(10,"Training "+d);
+localStorage.setItem("weekDays",JSON.stringify(weekDays));
+render();
+};
+week.appendChild(el);
+});
+}
+
+function renderMonth(){
+month.innerHTML="";
+let now=new Date();
+let days=new Date(now.getFullYear(),now.getMonth()+1,0).getDate();
+for(let i=1;i<=days;i++){
+let k=`${now.getFullYear()}-${now.getMonth()}-${i}`;
+let el=document.createElement("div");
+el.className="day"+(monthDays[k]?" done":"");
+el.textContent=i;
+el.onclick=()=>{
+monthDays[k]=!monthDays[k];
+addXP(5,"Check-in");
+localStorage.setItem("monthDays",JSON.stringify(monthDays));
+render();
+};
+month.appendChild(el);
+}
+}
+
+/* ACTIONS */
+function logTraining(){addXP(20,"Training "+trainingType.value);render();}
+function logFood(){addXP(10,"Ernährung "+foodMode.value);render();}
+function startBeast(){if(!beastDay){beastDay=1;localStorage.setItem("beastDay",1);render();}}
+function finishBeast(){
+if(!(bTrain.checked&&bFood.checked&&bSleep.checked)) return alert("Alles abhaken");
+addXP(40,"Beast Tag "+beastDay);
+beastDay++;
+localStorage.setItem("beastDay",beastDay);
+bTrain.checked=bFood.checked=bSleep.checked=false;
+render();
+}
+
+/* LOG */
+function addLog(){
+if(!logText.value) return;
+logs.unshift(logText.value+" · "+new Date().toLocaleTimeString());
+localStorage.setItem("logs",JSON.stringify(logs));
+logText.value="";
+renderFeed();
+}
+
+function renderFeed(){
+feed.innerHTML="";
+logs.forEach(l=>{let d=document.createElement("div");d.textContent=l;feed.appendChild(d);});
+}
+
+/* BACKUP */
 function exportData(){
 const data={};
 for(let i=0;i<localStorage.length;i++){
-const key=localStorage.key(i);
-data[key]=localStorage.getItem(key);
+let k=localStorage.key(i);
+data[k]=localStorage.getItem(k);
 }
-const blob=new Blob([JSON.stringify({
-version:"GYM-SPARTA-MASTER",
-timestamp:new Date().toISOString(),
-data
-},null,2)],{type:"application/json"});
+const blob=new Blob([JSON.stringify(data,null,2)],{type:"application/json"});
 const a=document.createElement("a");
 a.href=URL.createObjectURL(blob);
-a.download="gym-sparta-backup-"+new Date().toISOString().slice(0,10)+".json";
+a.download="sparta-backup.json";
 a.click();
-logSystem("Backup exportiert");
 }
 
 function importData(){
-const file=document.getElementById("importFile").files[0];
-if(!file) return alert("Keine Datei gewählt");
-if(!confirm("⚠️ ALLE aktuellen Daten werden überschrieben. Fortfahren?")) return;
-const reader=new FileReader();
-reader.onload=e=>{
-try{
-const json=JSON.parse(e.target.result);
-if(!json.data) throw "Ungültiges Backup";
+const f=importFile.files[0];
+if(!f) return;
+const r=new FileReader();
+r.onload=e=>{
+const d=JSON.parse(e.target.result);
 localStorage.clear();
-Object.keys(json.data).forEach(k=>localStorage.setItem(k,json.data[k]));
+Object.keys(d).forEach(k=>localStorage.setItem(k,d[k]));
 location.reload();
-}catch(err){
-alert("❌ Backup beschädigt oder inkompatibel");
-}
 };
-reader.readAsText(file);
+r.readAsText(f);
+}
+
+function resetAll(){
+if(confirm("ALLES LÖSCHEN?")){
+localStorage.clear();
+location.reload();
+}
 }
 </script>
-
 </body>
 </html>
