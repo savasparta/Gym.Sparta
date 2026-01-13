@@ -115,6 +115,22 @@ XP: <span id="xp">0</span><br>
 🔥 Streak: <span id="streak">0</span>
 </div>
 
+<!-- BEAST MODE -->
+<div class="card">
+<h3>🔥 BEAST MODE – 30 TAGE</h3>
+<p id="beastStatus">Bereit für den Kampf?</p>
+
+<button onclick="startBeast()">Beast-Mode starten</button>
+
+<div id="beastTasks" class="hidden">
+<label><input type="checkbox" id="bmTrain"> Training erledigt</label><br>
+<label><input type="checkbox" id="bmFood"> Ernährung eingehalten</label><br>
+<label><input type="checkbox" id="bmCodex"> Codex akzeptiert</label><br>
+
+<button onclick="completeBeastDay()">Tag abschließen</button>
+</div>
+</div>
+
 <div class="card">
 <h3>🏋️ TRAININGSPLAN</h3>
 <select id="planSelect" onchange="savePlan()">
@@ -186,6 +202,11 @@ let streak=+localStorage.getItem("streak")||0;
 let days=JSON.parse(localStorage.getItem("week"))||[0,0,0,0,0,0,0];
 let posts=JSON.parse(localStorage.getItem("feed"))||[];
 
+/* ===== BEAST MODE DATA ===== */
+let beastActive = localStorage.getItem("beast_active")==="true";
+let beastDay = +localStorage.getItem("beast_day")||0;
+let beastLast = localStorage.getItem("beast_lastDate");
+
 const plans={
 6:"Mo Brust · Di Beine · Mi Arme · Do Rücken · Fr Brust/Schulter · Sa Pause · So Schulter/Nacken",
 4:"OK schwer · UK schwer · Pause · OK Volumen · UK Volumen",
@@ -199,8 +220,18 @@ diet:"☠️ Diät: Skyr · Fisch · Eier · Gemüse · Shake",
 hardcore:"🏛️ Hardcore: Fleisch · Eier · Wasser · Salz"
 };
 
-function savePlan(){localStorage.setItem("plan",planSelect.value);planInfo.innerHTML=plans[planSelect.value];planInfo.classList.remove("hidden");trackerBox.classList.remove("hidden")}
-function saveNutrition(){localStorage.setItem("nutrition",nutritionSelect.value);nutritionInfo.innerHTML=nutrition[nutritionSelect.value];nutritionInfo.classList.remove("hidden")}
+function savePlan(){
+localStorage.setItem("plan",planSelect.value);
+planInfo.innerHTML=plans[planSelect.value];
+planInfo.classList.remove("hidden");
+trackerBox.classList.remove("hidden");
+}
+
+function saveNutrition(){
+localStorage.setItem("nutrition",nutritionSelect.value);
+nutritionInfo.innerHTML=nutrition[nutritionSelect.value];
+nutritionInfo.classList.remove("hidden");
+}
 
 function renderWeek(){
 week.innerHTML="";
@@ -221,6 +252,52 @@ week.appendChild(el);
 });
 }
 
+/* ===== BEAST MODE ===== */
+function startBeast(){
+if(beastActive) return alert("Beast-Mode läuft bereits");
+beastActive=true;
+beastDay=1;
+beastLast="";
+localStorage.setItem("beast_active","true");
+localStorage.setItem("beast_day",beastDay);
+updateBeast();
+}
+
+function updateBeast(){
+if(!beastActive){
+beastStatus.textContent="Bereit für den Kampf?";
+beastTasks.classList.add("hidden");
+return;
+}
+beastStatus.textContent="Tag "+beastDay+" von 30 – Keine Ausreden";
+beastTasks.classList.remove("hidden");
+}
+
+function completeBeastDay(){
+const today=new Date().toDateString();
+if(beastLast===today) return alert("Heute bereits erledigt");
+if(!bmTrain.checked||!bmFood.checked||!bmCodex.checked)
+return alert("Alle Punkte müssen erfüllt sein");
+
+beastLast=today;
+beastDay++;
+bmTrain.checked=bmFood.checked=bmCodex.checked=false;
+
+if(beastDay>30){
+alert("🏆 BEAST MODE GESCHAFFT!");
+localStorage.removeItem("beast_active");
+localStorage.removeItem("beast_day");
+localStorage.removeItem("beast_lastDate");
+beastActive=false;
+beastDay=0;
+}
+
+localStorage.setItem("beast_day",beastDay);
+localStorage.setItem("beast_lastDate",beastLast);
+updateBeast();
+}
+
+/* ===== LOGBUCH ===== */
 function addPost(){
 if(!postText.value)return;
 posts.unshift(postText.value);
@@ -243,7 +320,9 @@ function renderAll(){
 level.textContent=Math.floor(xp/100)+1;
 document.getElementById("xp").textContent=xp;
 document.getElementById("streak").textContent=streak;
-renderWeek();renderFeed();
+renderWeek();
+renderFeed();
+updateBeast();
 leaderboard.innerHTML="🥇 Leonidas · 🥈 Ares · 🥉 SpartanX<br><b>Du:</b> "+xp+" XP";
 }
 
