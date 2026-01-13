@@ -17,7 +17,7 @@ body {
   padding:20px;
   text-align:center;
 }
-h1,h2 { color:gold; }
+h1,h2,h3 { color:gold; }
 .logo {
   max-width:260px;
   width:80%;
@@ -68,6 +68,15 @@ input[type="checkbox"] {
   color:gold;
   margin-top:10px;
 }
+.beast {
+  background:red;
+  color:white;
+}
+.quote {
+  font-style:italic;
+  color:gold;
+  margin:15px 0;
+}
 </style>
 </head>
 
@@ -77,21 +86,18 @@ input[type="checkbox"] {
 
 <h1>🏛️ GYM SPARTA 🏛️</h1>
 
-<div class="card">
-<strong>Sparta-Mentalität</strong><br><br>
-Keine Ausreden.<br>
-Disziplin vor Motivation.<br>
-Heute stärker als gestern.
-</div>
+<div class="quote" id="quote"></div>
 
-<h2>🔥 Daily Checklist</h2>
+<button onclick="toggleBeast()" id="beastBtn">🔥 BEAST MODE AKTIVIEREN</button>
 
-<label class="card"><input type="checkbox" id="task1"> 🥣 Frühstück clean</label>
-<label class="card"><input type="checkbox" id="task2"> 🍗 Proteinreich essen</label>
-<label class="card"><input type="checkbox" id="task3"> 🍌 Pre-Workout Fokus</label>
-<label class="card"><input type="checkbox" id="task4"> 🏋️ Training erledigt</label>
-<label class="card"><input type="checkbox" id="task5"> 🥛 Post-Workout Shake</label>
-<label class="card"><input type="checkbox" id="task6"> 🌙 500g Quark</label>
+<h2>🔥 Daily Spartan Checklist</h2>
+
+<label class="card"><input type="checkbox" class="task"> 🥣 Frühstück clean</label>
+<label class="card"><input type="checkbox" class="task"> 🍗 Proteinreich essen</label>
+<label class="card"><input type="checkbox" class="task"> 🍌 Pre-Workout Fokus</label>
+<label class="card"><input type="checkbox" class="task"> 🏋️ Training erledigt</label>
+<label class="card"><input type="checkbox" class="task"> 🥛 Post-Workout Shake</label>
+<label class="card"><input type="checkbox" class="task"> 🌙 500g Quark</label>
 
 <div class="progress-box">
 <strong>Tages-Fortschritt</strong>
@@ -101,7 +107,7 @@ Heute stärker als gestern.
 <div class="level" id="levelText"></div>
 <div class="level">🔥 Streak: <span id="streak">0</span> Tage</div>
 
-<button onclick="resetDay()">🔁 Neuer Tag</button>
+<button onclick="newDay()">🔁 Neuer Tag</button>
 
 <h2>🏋️ Trainingspläne</h2>
 
@@ -126,26 +132,64 @@ Beine<br>
 Schulter-Nacken
 </div>
 
-<p class="footer">Auuu! 💪 Gym-Sparta 3.0</p>
+<h2>🥗 Spartan Ernährung</h2>
 
-<audio id="ding">
-  <source src="https://actions.google.com/sounds/v1/cartoon/clang_and_wobble.ogg">
+<button onclick="toggle('bulk')">💪 Muskelaufbau (einfach)</button>
+<div id="bulk" class="card hidden">
+Frühstück: Eier + Haferflocken<br>
+Mittag: Reis + Hähnchen<br>
+Snack: Skyr / Shake<br>
+Abend: Fleisch + Kartoffeln<br>
+Vor Schlafen: Quark
+</div>
+
+<button onclick="toggle('cut')">🔥 Diät + Muskelerhalt</button>
+<div id="cut" class="card hidden">
+Frühstück: Eier / Skyr<br>
+Mittag: Gemüse + Fleisch<br>
+Snack: Proteinshake<br>
+Abend: Fisch / Salat<br>
+Carbs nur ums Training
+</div>
+
+<h2>⚔️ Gesetze von Sparta</h2>
+
+<div class="card">
+• Keine Ausreden<br>
+• Training > Gefühle<br>
+• Disziplin schlägt Motivation<br>
+• Schmerz ist temporär – Stolz bleibt
+</div>
+
+<p class="footer">Auuu! 💪 Gym-Sparta 4.0</p>
+
+<audio id="sound">
+  <source src="https://actions.google.com/sounds/v1/human_voices/man_grunt.ogg">
 </audio>
 
 <script>
-const tasks = document.querySelectorAll('input[type="checkbox"]');
+const tasks = document.querySelectorAll('.task');
 const bar = document.getElementById('progressBar');
 const levelText = document.getElementById('levelText');
 const streakEl = document.getElementById('streak');
-const sound = document.getElementById('ding');
+const sound = document.getElementById('sound');
+const quotes = [
+  "Sparta lebt in dir.",
+  "Heute wird nicht verhandelt.",
+  "Schwach sein ist keine Option.",
+  "Du schuldest dir Größe."
+];
 
 let xp = Number(localStorage.getItem('xp')) || 0;
 let streak = Number(localStorage.getItem('streak')) || 0;
+let beast = localStorage.getItem('beast') === 'true';
+
+document.getElementById('quote').innerText =
+quotes[Math.floor(Math.random()*quotes.length)];
 
 function update() {
   const done = [...tasks].filter(t => t.checked).length;
   bar.style.width = (done / tasks.length) * 100 + '%';
-
   levelText.innerText = "🏅 Level: " + getLevel(xp);
   streakEl.innerText = streak;
 }
@@ -158,11 +202,9 @@ function getLevel(xp) {
 }
 
 tasks.forEach(t => {
-  t.checked = localStorage.getItem(t.id) === 'true';
   t.addEventListener('change', () => {
-    localStorage.setItem(t.id, t.checked);
     if (t.checked) {
-      xp += 5;
+      xp += beast ? 10 : 5;
       sound.play();
     }
     localStorage.setItem('xp', xp);
@@ -170,17 +212,11 @@ tasks.forEach(t => {
   });
 });
 
-function resetDay() {
+function newDay() {
   const allDone = [...tasks].every(t => t.checked);
-  if (allDone) streak++;
-  else streak = 0;
-
+  streak = allDone ? streak + 1 : 0;
   localStorage.setItem('streak', streak);
-
-  tasks.forEach(t => {
-    t.checked = false;
-    localStorage.setItem(t.id, false);
-  });
+  tasks.forEach(t => t.checked = false);
   update();
 }
 
@@ -188,6 +224,16 @@ function toggle(id) {
   document.getElementById(id).classList.toggle('hidden');
 }
 
+function toggleBeast() {
+  beast = !beast;
+  localStorage.setItem('beast', beast);
+  document.body.classList.toggle('beast', beast);
+  document.getElementById('beastBtn').innerText =
+    beast ? "🔥 BEAST MODE AKTIV" : "🔥 BEAST MODE AKTIVIEREN";
+}
+
+toggleBeast();
+toggleBeast();
 update();
 </script>
 
