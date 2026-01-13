@@ -2,7 +2,7 @@
 <html lang="de">
 <head>
 <meta charset="UTF-8">
-<title>GYM SPARTA – COMMUNITY</title>
+<title>GYM SPARTA</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <link rel="apple-touch-icon" href="logo.png.PNG">
@@ -17,49 +17,30 @@ body{
   text-align:center
 }
 h1,h2{color:gold}
-.logo{
-  max-width:220px;width:80%;
-  margin:20px auto;display:block
-}
+.logo{max-width:240px;width:80%;margin:20px auto;display:block}
 .card{
   border:2px solid gold;
   border-radius:16px;
-  padding:20px;
+  padding:18px;
   margin:16px auto;
-  max-width:420px;
+  max-width:520px;
   text-align:left
 }
 input,select{
-  width:100%;
-  padding:12px;
-  border-radius:10px;
-  border:none;
-  margin-top:8px;
-  font-size:16px
+  width:100%;padding:12px;
+  border-radius:10px;border:none;
+  margin-top:8px;font-size:16px
 }
 button{
-  width:100%;
-  padding:14px;
-  margin-top:14px;
-  background:gold;
-  color:#000;
-  border:none;
-  border-radius:12px;
-  font-size:18px;
-  font-weight:bold
+  width:100%;padding:14px;
+  background:gold;color:#000;
+  border:none;border-radius:12px;
+  font-size:18px;font-weight:bold;
+  margin-top:14px
 }
-.link{
-  color:gold;
-  text-align:center;
-  margin-top:10px;
-  cursor:pointer
-}
+.link{color:gold;margin-top:10px;text-align:center;cursor:pointer}
 .hidden{display:none}
-.footer{
-  margin-top:30px;
-  color:gold;
-  font-weight:bold
-}
+.footer{color:gold;margin-top:30px;font-weight:bold}
 </style>
 </head>
 
@@ -73,8 +54,8 @@ button{
 <h2>Login</h2>
 <input id="loginName" placeholder="Spartan Name">
 <input id="loginPass" type="password" placeholder="Passwort">
-<button onclick="login()">EINLOGGEN</button>
-<div class="link" onclick="showRegister()">Noch kein Spartan? Registrieren</div>
+<button onclick="login()">Einloggen</button>
+<div class="link" onclick="showRegister()">Registrieren</div>
 </div>
 
 <!-- REGISTER -->
@@ -88,8 +69,8 @@ button{
 <option>Legende</option>
 <option>Imperator</option>
 </select>
-<button onclick="register()">SPARTAN WERDEN</button>
-<div class="link" onclick="showLogin()">Schon dabei? Login</div>
+<button onclick="register()">Spartan werden</button>
+<div class="link" onclick="showLogin()">Zurück zum Login</div>
 </div>
 
 <!-- APP -->
@@ -100,25 +81,42 @@ button{
 <strong>📜 Spartan Codex</strong><br><br>
 • Disziplin schlägt Motivation<br>
 • Kein Bullshit<br>
-• Training ist Pflicht<br>
-• Community ist Stärke
+• Stärke ist Pflicht<br>
+• Community ist Macht
 </div>
 
 <div class="card">
-<strong>🏋️ Trainingsoptionen</strong><br><br>
-<b>6 Tage ALL-IN:</b><br>
-Mo Brust · Di Beine · Mi Arme · Do Rücken · Fr Brust/Schulter · So Schulter/Nacken<br><br>
-
-<b>3–4 Tage SPLIT:</b><br>
-Tag 1: Oberkörper<br>
-Tag 2: Unterkörper<br>
-Tag 3: Push / Pull (optional)
+<strong>🏋️ 6-Tage ALL-IN Sparta Plan</strong><br><br>
+Mo – Brust<br>
+Di – Beine<br>
+Mi – Arme<br>
+Do – Rücken<br>
+Fr – Brust / Schulter<br>
+Sa – Pause<br>
+So – Schulter / Trapez / Nacken
 </div>
 
-<button onclick="logout()">LOGOUT</button>
+<div class="card">
+<strong>🏋️ 3–4 Tage Sparta Split (wenig Zeit)</strong><br><br>
+Tag 1 – Oberkörper<br>
+Tag 2 – Unterkörper<br>
+Tag 3 – Push / Pull (optional)
 </div>
 
-<p class="footer">Auuu 💪 Gym-Sparta Community</p>
+<div class="card">
+<strong>🥗 Essen – einfach & effektiv</strong><br><br>
+<strong>Muskelaufbau:</strong><br>
+Eier · Hafer · Reis · Fleisch · Quark<br><br>
+<strong>Diät mit Muskeln:</strong><br>
+Skyr · Gemüse · Fisch · Shake<br><br>
+<strong>Schnell:</strong><br>
+Proteinshake · Banane · Nüsse
+</div>
+
+<button onclick="logout()">Logout</button>
+</div>
+
+<p class="footer">Auuu 💪 Gym-Sparta</p>
 
 <script>
 const loginBox=document.getElementById("loginBox");
@@ -136,41 +134,40 @@ function showLogin(){
 }
 
 function register(){
-  const name=regName.value;
-  const pass=regPass.value;
-  const title=regTitle.value;
-
-  if(!name||!pass){alert("Alles ausfüllen!");return;}
-
-  localStorage.setItem("spartanUser",JSON.stringify({name,pass,title}));
-  alert("Willkommen, Spartaner!");
+  if(!regName.value||!regPass.value){
+    alert("Alles ausfüllen");return;
+  }
+  localStorage.setItem("spartanUser",
+    JSON.stringify({
+      name:regName.value,
+      pass:regPass.value,
+      title:regTitle.value
+    })
+  );
+  alert("Willkommen bei Sparta");
   showLogin();
 }
 
 function login(){
   const user=JSON.parse(localStorage.getItem("spartanUser"));
-  if(!user){alert("Kein Account gefunden");return;}
+  if(!user){alert("Kein Account");return;}
   if(loginName.value!==user.name||loginPass.value!==user.pass){
     alert("Falsche Daten");return;
   }
-  startApp(user);
+  start(user);
 }
 
-function startApp(user){
+function start(user){
   loginBox.classList.add("hidden");
   registerBox.classList.add("hidden");
   app.classList.remove("hidden");
   welcome.textContent="Willkommen "+user.title+" "+user.name+" 🏛️";
 }
 
-function logout(){
-  location.reload();
-}
+function logout(){location.reload();}
 
 const saved=JSON.parse(localStorage.getItem("spartanUser"));
-if(saved){
-  startApp(saved);
-}
+if(saved) start(saved);
 </script>
 
 </body>
