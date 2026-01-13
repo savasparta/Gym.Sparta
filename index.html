@@ -15,6 +15,7 @@
 --card:#111;
 --input:#1a1a1a;
 }
+
 body{
 margin:0;
 padding:20px;
@@ -23,9 +24,17 @@ color:#fff;
 font-family:Arial,Helvetica,sans-serif;
 text-align:center;
 }
-h1,h2,h3{color:var(--gold);}
-.logo{width:85%;max-width:260px;margin:20px auto;display:block}
 
+h1,h2,h3{color:var(--gold);}
+
+.logo{
+width:85%;
+max-width:260px;
+margin:20px auto;
+display:block;
+}
+
+/* CARD */
 .card{
 background:var(--card);
 border:2px solid var(--gold);
@@ -37,6 +46,7 @@ text-align:left;
 box-sizing:border-box;
 }
 
+/* BUTTON */
 button{
 width:100%;
 padding:14px;
@@ -50,6 +60,7 @@ font-weight:bold;
 cursor:pointer;
 }
 
+/* INPUTS */
 input,select,textarea{
 width:100%;
 padding:14px;
@@ -63,10 +74,20 @@ box-sizing:border-box;
 outline:none;
 }
 
-input::placeholder, textarea::placeholder{color:#aaa}
+input::placeholder, textarea::placeholder{
+color:#aaa;
+}
 
+/* UTIL */
 .hidden{display:none}
-.week{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;margin-top:10px}
+
+.week{
+display:grid;
+grid-template-columns:repeat(7,1fr);
+gap:6px;
+margin-top:10px;
+}
+
 .day{
 border:1px solid var(--gold);
 border-radius:8px;
@@ -75,9 +96,24 @@ font-size:12px;
 cursor:pointer;
 text-align:center;
 }
-.day.done{background:var(--gold);color:#000;font-weight:bold}
-.feedPost{border-bottom:1px solid var(--gold);padding:6px 0}
-.footer{color:var(--gold);margin:30px 0;font-weight:bold;text-align:center}
+
+.day.done{
+background:var(--gold);
+color:#000;
+font-weight:bold;
+}
+
+.feedPost{
+border-bottom:1px solid var(--gold);
+padding:6px 0;
+}
+
+.footer{
+color:var(--gold);
+margin:30px 0;
+font-weight:bold;
+text-align:center;
+}
 </style>
 </head>
 
@@ -89,7 +125,10 @@ text-align:center;
 <!-- ACCESS GATE -->
 <div class="card hidden" id="accessBox">
 <h2>⚔️ Spartan Zugang</h2>
-<p>Diese App ist privat.<br>Ein Zugang = ein Krieger.</p>
+<p>
+Diese App ist privat.<br>
+Ein Zugang = ein Krieger.
+</p>
 <input id="accessCode" placeholder="Sparta-Code">
 <input id="spartaName" placeholder="Dein Spartan Name">
 <button onclick="unlock()">Eintreten</button>
@@ -100,6 +139,7 @@ text-align:center;
 
 <h2 id="welcome"></h2>
 
+<!-- CODEX -->
 <div class="card">
 <strong>📜 SPARTAN CODEX</strong><br><br>
 Disziplin schlägt Motivation.<br>
@@ -108,6 +148,7 @@ Konstanz ist alles.<br><br>
 ⚠️ Ein Zugang = ein Krieger.
 </div>
 
+<!-- PROFIL -->
 <div class="card">
 <strong>👤 PROFIL</strong><br>
 Level: <span id="level">1</span><br>
@@ -131,6 +172,7 @@ XP: <span id="xp">0</span><br>
 </div>
 </div>
 
+<!-- TRAINING -->
 <div class="card">
 <h3>🏋️ TRAININGSPLAN</h3>
 <select id="planSelect" onchange="savePlan()">
@@ -148,6 +190,7 @@ XP: <span id="xp">0</span><br>
 <div class="week" id="week"></div>
 </div>
 
+<!-- ERNÄHRUNG -->
 <div class="card">
 <h3>🥗 ERNÄHRUNG</h3>
 <select id="nutritionSelect" onchange="saveNutrition()">
@@ -161,6 +204,7 @@ XP: <span id="xp">0</span><br>
 
 <div class="card hidden" id="nutritionInfo"></div>
 
+<!-- LOGBUCH -->
 <div class="card">
 <h3>📓 SPARTAN LOGBUCH</h3>
 <textarea id="postText" placeholder="Was hast du heute zerstört?"></textarea>
@@ -168,6 +212,7 @@ XP: <span id="xp">0</span><br>
 <div id="feed"></div>
 </div>
 
+<!-- LEADERBOARD -->
 <div class="card">
 <h3>🏆 LEGENDE</h3>
 <div id="leaderboard"></div>
@@ -175,7 +220,7 @@ XP: <span id="xp">0</span><br>
 
 </div>
 
-<p class="footer">GYM-SPARTA · OFFLINE MASTER 🏛️</p>
+<p class="footer">GYM-SPARTA · OFFLINE MASTER · BEAST BUILD 🏛️</p>
 
 <script>
 /* ===== ACCESS ===== */
@@ -220,17 +265,12 @@ diet:"☠️ Diät: Skyr · Fisch · Eier · Gemüse · Shake",
 hardcore:"🏛️ Hardcore: Fleisch · Eier · Wasser · Salz"
 };
 
+/* ===== TRAINING ===== */
 function savePlan(){
 localStorage.setItem("plan",planSelect.value);
 planInfo.innerHTML=plans[planSelect.value];
 planInfo.classList.remove("hidden");
 trackerBox.classList.remove("hidden");
-}
-
-function saveNutrition(){
-localStorage.setItem("nutrition",nutritionSelect.value);
-nutritionInfo.innerHTML=nutrition[nutritionSelect.value];
-nutritionInfo.classList.remove("hidden");
 }
 
 function renderWeek(){
@@ -250,6 +290,13 @@ renderAll();
 };
 week.appendChild(el);
 });
+}
+
+/* ===== ERNÄHRUNG ===== */
+function saveNutrition(){
+localStorage.setItem("nutrition",nutritionSelect.value);
+nutritionInfo.innerHTML=nutrition[nutritionSelect.value];
+nutritionInfo.classList.remove("hidden");
 }
 
 /* ===== BEAST MODE ===== */
@@ -316,6 +363,7 @@ feed.appendChild(d);
 });
 }
 
+/* ===== RENDER ===== */
 function renderAll(){
 level.textContent=Math.floor(xp/100)+1;
 document.getElementById("xp").textContent=xp;
@@ -323,7 +371,8 @@ document.getElementById("streak").textContent=streak;
 renderWeek();
 renderFeed();
 updateBeast();
-leaderboard.innerHTML="🥇 Leonidas · 🥈 Ares · 🥉 SpartanX<br><b>Du:</b> "+xp+" XP";
+leaderboard.innerHTML=
+"🥇 Leonidas · 🥈 Ares · 🥉 SpartanX<br><b>Du:</b> "+xp+" XP";
 }
 
 /* INIT */
