@@ -16,31 +16,47 @@ body{
   font-family:Arial,sans-serif;
   text-align:center
 }
-h1,h2{color:gold}
+h1,h2,h3{color:gold}
 .logo{max-width:240px;width:80%;margin:20px auto;display:block}
 .card{
   border:2px solid gold;
   border-radius:16px;
   padding:18px;
   margin:16px auto;
-  max-width:560px;
+  max-width:600px;
   text-align:left
-}
-input,select{
-  width:100%;padding:12px;
-  border-radius:10px;border:none;
-  margin-top:8px;font-size:16px
 }
 button{
   width:100%;padding:14px;
   background:gold;color:#000;
   border:none;border-radius:12px;
   font-size:18px;font-weight:bold;
-  margin-top:14px
+  margin-top:10px
 }
-.link{color:gold;margin-top:10px;text-align:center;cursor:pointer}
+input,select{
+  width:100%;padding:12px;
+  border-radius:10px;border:none;
+  margin-top:8px;font-size:16px
+}
+.week{
+  display:grid;
+  grid-template-columns:repeat(7,1fr);
+  gap:6px;margin-top:10px
+}
+.day{
+  border:1px solid gold;
+  border-radius:8px;
+  padding:10px;
+  font-size:12px;
+  cursor:pointer;
+  text-align:center
+}
+.day.done{
+  background:gold;color:#000;font-weight:bold
+}
 .hidden{display:none}
 .footer{color:gold;margin-top:30px;font-weight:bold}
+.link{color:gold;text-align:center;cursor:pointer;margin-top:10px}
 </style>
 </head>
 
@@ -70,7 +86,7 @@ button{
 <option>Imperator</option>
 </select>
 <button onclick="register()">Spartan werden</button>
-<div class="link" onclick="showLogin()">Zurück zum Login</div>
+<div class="link" onclick="showLogin()">Zurück</div>
 </div>
 
 <!-- APP -->
@@ -79,101 +95,117 @@ button{
 
 <div class="card">
 <strong>📜 Spartan Codex</strong><br><br>
-• Disziplin schlägt Motivation<br>
-• Bodybuilding ist Handwerk<br>
-• Stärke ist Pflicht<br>
-• Konstanz gewinnt
+Disziplin schlägt Motivation.<br>
+Bodybuilding ist Handwerk.<br>
+Konstanz entscheidet.
 </div>
 
+<!-- PLAN AUSWAHL -->
 <div class="card">
-<strong>🔥 Trainingsvariante 1 – 6 Tage ALL-IN</strong><br><br>
-Mo – Brust<br>
-Di – Beine<br>
-Mi – Arme<br>
-Do – Rücken<br>
-Fr – Brust / Schulter<br>
-Sa – Pause<br>
-So – Schulter / Trapez / Nacken
+<h3>🏋️ Trainingsplan wählen</h3>
+<select id="planSelect" onchange="savePlan()">
+<option value="">– auswählen –</option>
+<option value="6">6 Tage ALL-IN</option>
+<option value="4">4 Tage Spartan Bodybuilding</option>
+<option value="3">3 Tage Split</option>
+</select>
 </div>
 
-<div class="card">
-<strong>⚔️ Trainingsvariante 2 – 3 Tage Split</strong><br><br>
-Tag 1 – Oberkörper<br>
-Tag 2 – Unterkörper<br>
-Tag 3 – Push / Pull
-</div>
+<!-- PLAN INFO -->
+<div class="card hidden" id="planInfo"></div>
 
-<div class="card">
-<strong>🏛️ Trainingsvariante 3 – 4 Tage Spartan Bodybuilding</strong><br><br>
-Tag 1 – Oberkörper schwer<br>
-Tag 2 – Unterkörper schwer<br>
-Pause<br>
-Tag 3 – Oberkörper Volumen<br>
-Tag 4 – Unterkörper Volumen
-</div>
-
-<div class="card">
-<strong>🥗 Ernährung – simpel & effektiv</strong><br><br>
-<strong>Aufbau:</strong> Eier · Reis · Fleisch · Hafer · Quark<br><br>
-<strong>Diät:</strong> Skyr · Fisch · Gemüse · Shake<br><br>
-<strong>Schnell:</strong> Shake · Banane · Nüsse
+<!-- TRACKER -->
+<div class="card hidden" id="trackerBox">
+<h3>📅 Wochen-Tracker</h3>
+<div class="week" id="week"></div>
 </div>
 
 <button onclick="logout()">Logout</button>
 </div>
 
-<p class="footer">Auuu 💪 Gym-Sparta – Version 10.0</p>
+<p class="footer">Auuu 💪 Gym-Sparta 11.0</p>
 
 <script>
 const loginBox=document.getElementById("loginBox");
 const registerBox=document.getElementById("registerBox");
 const app=document.getElementById("app");
 const welcome=document.getElementById("welcome");
+const planInfo=document.getElementById("planInfo");
+const trackerBox=document.getElementById("trackerBox");
+const weekBox=document.getElementById("week");
 
-function showRegister(){
-  loginBox.classList.add("hidden");
-  registerBox.classList.remove("hidden");
-}
-function showLogin(){
-  registerBox.classList.add("hidden");
-  loginBox.classList.remove("hidden");
-}
+const plans={
+6:`<strong>6 Tage ALL-IN</strong><br>
+Mo Brust · Di Beine · Mi Arme · Do Rücken · Fr Brust/Schulter · Sa Pause · So Schulter/Nacken`,
+4:`<strong>4 Tage Spartan Bodybuilding</strong><br>
+Tag 1 Oberkörper schwer · Tag 2 Unterkörper schwer · Pause · Tag 3 Oberkörper Volumen · Tag 4 Unterkörper Volumen`,
+3:`<strong>3 Tage Split</strong><br>
+Tag 1 Oberkörper · Tag 2 Unterkörper · Tag 3 Push/Pull`
+};
+
+let days=JSON.parse(localStorage.getItem("week"))||[0,0,0,0,0,0,0];
+
+function showRegister(){loginBox.classList.add("hidden");registerBox.classList.remove("hidden")}
+function showLogin(){registerBox.classList.add("hidden");loginBox.classList.remove("hidden")}
 
 function register(){
-  if(!regName.value||!regPass.value){
-    alert("Alles ausfüllen");return;
-  }
-  localStorage.setItem("spartanUser",
-    JSON.stringify({
-      name:regName.value,
-      pass:regPass.value,
-      title:regTitle.value
-    })
-  );
-  alert("Willkommen bei Sparta");
+  if(!regName.value||!regPass.value)return alert("Alles ausfüllen");
+  localStorage.setItem("spartanUser",JSON.stringify({
+    name:regName.value,pass:regPass.value,title:regTitle.value
+  }));
+  alert("Willkommen Spartan");
   showLogin();
 }
 
 function login(){
-  const user=JSON.parse(localStorage.getItem("spartanUser"));
-  if(!user){alert("Kein Account");return;}
-  if(loginName.value!==user.name||loginPass.value!==user.pass){
-    alert("Falsche Daten");return;
-  }
-  start(user);
+  const u=JSON.parse(localStorage.getItem("spartanUser"));
+  if(!u||loginName.value!==u.name||loginPass.value!==u.pass)
+    return alert("Falsche Daten");
+  start(u);
 }
 
-function start(user){
+function start(u){
   loginBox.classList.add("hidden");
   registerBox.classList.add("hidden");
   app.classList.remove("hidden");
-  welcome.textContent="Willkommen "+user.title+" "+user.name+" 🏛️";
+  welcome.textContent=`Willkommen ${u.title} ${u.name} 🏛️`;
+  const p=localStorage.getItem("plan");
+  if(p){planSelect.value=p;renderPlan(p)}
+  renderWeek();
 }
 
-function logout(){location.reload();}
+function logout(){location.reload()}
+
+function savePlan(){
+  const p=planSelect.value;
+  if(!p)return;
+  localStorage.setItem("plan",p);
+  renderPlan(p);
+}
+
+function renderPlan(p){
+  planInfo.innerHTML=plans[p];
+  planInfo.classList.remove("hidden");
+  trackerBox.classList.remove("hidden");
+}
+
+function renderWeek(){
+  weekBox.innerHTML="";
+  ["Mo","Di","Mi","Do","Fr","Sa","So"].forEach((d,i)=>{
+    const el=document.createElement("div");
+    el.className="day"+(days[i]?" done":"");
+    el.textContent=d;
+    el.onclick=()=>{
+      days[i]=days[i]?0:1;
+      localStorage.setItem("week",JSON.stringify(days));
+      renderWeek();
+    };
+    weekBox.appendChild(el);
+  });
+}
 
 const saved=JSON.parse(localStorage.getItem("spartanUser"));
-if(saved) start(saved);
+if(saved)start(saved);
 </script>
 
 </body>
