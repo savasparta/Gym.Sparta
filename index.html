@@ -15,7 +15,7 @@
       text-align: center;
     }
 
-    h1 {
+    h1, h2 {
       color: gold;
       margin-bottom: 10px;
     }
@@ -41,6 +41,32 @@
       margin-right: 10px;
     }
 
+    .progress-box {
+      border: 2px solid gold;
+      border-radius: 12px;
+      padding: 10px;
+      margin: 20px 0;
+    }
+
+    .progress-bar {
+      height: 20px;
+      background: gold;
+      width: 0%;
+      border-radius: 10px;
+      transition: width 0.3s;
+    }
+
+    button {
+      background: gold;
+      color: black;
+      border: none;
+      padding: 12px 20px;
+      border-radius: 10px;
+      font-size: 16px;
+      font-weight: bold;
+      margin-top: 15px;
+    }
+
     .footer {
       margin-top: 30px;
       color: gold;
@@ -55,53 +81,101 @@
   <img src="logo.png.PNG" alt="Gym Sparta Logo" class="logo">
 
   <h1>🏛️ GYM SPARTA 🏛️</h1>
-  <p><strong>Auuu!</strong> Zieh durch, Malaka 💪</p>
+  <p><strong>Auuu!</strong> Disziplin. Fokus. Wachstum 💪</p>
+
+  <h2>🔥 Daily Checklist</h2>
 
   <label class="card">
-    <input type="checkbox" id="task1">
-    🥣 Frühstück – sauber essen
+    <input type="checkbox" id="task1"> 🥣 Frühstück – sauber essen
   </label>
 
   <label class="card">
-    <input type="checkbox" id="task2">
-    🍗 Mittag – Protein rein
+    <input type="checkbox" id="task2"> 🍗 Mittag – Protein rein
   </label>
 
   <label class="card">
-    <input type="checkbox" id="task3">
-    🍌 Pre-Workout – Fokus
+    <input type="checkbox" id="task3"> 🍌 Pre-Workout – Fokus
   </label>
 
   <label class="card">
-    <input type="checkbox" id="task4">
-    🏋️ Training – keine Ausreden
+    <input type="checkbox" id="task4"> 🏋️ Training – keine Ausreden
   </label>
 
   <label class="card">
-    <input type="checkbox" id="task5">
-    🥛 Post-Workout – Regeneration
+    <input type="checkbox" id="task5"> 🥛 Post-Workout – Regeneration
   </label>
 
   <label class="card">
-    <input type="checkbox" id="task6">
-    🌙 500g Quark + Honig / Nüsse / Banane
+    <input type="checkbox" id="task6"> 🌙 500g Quark vor dem Schlafen
   </label>
 
-  <p class="footer">🔥 Ziel: 200–250g Protein pro Tag 🔥</p>
-  <p class="footer">Malaka… weiter so 💪 Auuu!</p>
+  <div class="progress-box">
+    <strong>Fortschritt</strong>
+    <div class="progress-bar" id="progressBar"></div>
+  </div>
 
-  <!-- SCRIPT -->
+  <button onclick="resetDay()">🔁 Tag zurücksetzen</button>
+
+  <h2>🏋️ Trainingsplan</h2>
+
+  <div class="card">
+    <strong>Push (Brust / Schulter / Trizeps)</strong><br>
+    • Bankdrücken<br>
+    • Schulterdrücken<br>
+    • Dips<br>
+    • Seitheben<br>
+    • Trizeps Pushdowns
+  </div>
+
+  <div class="card">
+    <strong>Pull (Rücken / Bizeps)</strong><br>
+    • Klimmzüge<br>
+    • Rudern<br>
+    • Latzug<br>
+    • Face Pulls<br>
+    • Bizepscurls
+  </div>
+
+  <div class="card">
+    <strong>Legs (Beine / Core)</strong><br>
+    • Kniebeugen<br>
+    • Beinpresse<br>
+    • Beinbeuger<br>
+    • Wadenheben<br>
+    • Bauch
+  </div>
+
+  <p class="footer">🔥 Ziel: 200–250g Protein / Tag 🔥</p>
+  <p class="footer">Malaka… Auuu! 💪</p>
+
   <script>
-    const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+    const boxes = document.querySelectorAll('input[type="checkbox"]');
+    const bar = document.getElementById('progressBar');
 
-    checkboxes.forEach(box => {
-      const saved = localStorage.getItem(box.id);
-      box.checked = saved === 'true';
+    function updateProgress() {
+      const total = boxes.length;
+      const checked = [...boxes].filter(b => b.checked).length;
+      const percent = (checked / total) * 100;
+      bar.style.width = percent + '%';
+    }
 
+    boxes.forEach(box => {
+      box.checked = localStorage.getItem(box.id) === 'true';
       box.addEventListener('change', () => {
         localStorage.setItem(box.id, box.checked);
+        updateProgress();
       });
     });
+
+    function resetDay() {
+      boxes.forEach(box => {
+        box.checked = false;
+        localStorage.setItem(box.id, false);
+      });
+      updateProgress();
+    }
+
+    updateProgress();
   </script>
 
 </body>
