@@ -107,7 +107,6 @@ margin-top:8px;
 <img src="logo.png.PNG" class="logo">
 <h1>🏛️ GYM SPARTA 🏛️</h1>
 
-<!-- ACCESS -->
 <div class="card hidden" id="accessBox">
 <h2>⚔️ Spartan Zugang</h2>
 <input id="accessCode" placeholder="Sparta-Code">
@@ -118,14 +117,12 @@ margin-top:8px;
 <div class="hidden" id="app">
 <h2 id="welcome"></h2>
 
-<!-- SPARTAN COACH -->
 <div class="card">
 <h3>🧠 SPARTAN COACH</h3>
 <div id="coachQuote" style="font-weight:bold;margin-bottom:10px;"></div>
 <div id="coachRule" style="font-size:14px;opacity:0.9;"></div>
 </div>
 
-<!-- STATUS -->
 <div class="card">
 <h3>🛡️ SYSTEM STATUS</h3>
 Gerät: <span id="deviceStatus" class="status-ok">Gebunden</span><br>
@@ -137,7 +134,6 @@ Ernährung: <span id="activeFood">–</span><br>
 Letzter aktiver Tag: <span id="lastDay">–</span>
 </div>
 
-<!-- PROFIL -->
 <div class="card">
 <h3>👤 PROFIL</h3>
 Level: <span id="level">1</span><br>
@@ -146,7 +142,6 @@ XP: <span id="xp">0</span><br>
 <div id="rankBox" class="rank"></div>
 </div>
 
-<!-- BEAST MODE -->
 <div class="card">
 <h3>🔥 BEAST MODE – 30 TAGE</h3>
 Status: <span id="beastStatus">Nicht aktiv</span><br>
@@ -159,7 +154,6 @@ Status: <span id="beastStatus">Nicht aktiv</span><br>
 </div>
 </div>
 
-<!-- TRACKER -->
 <div class="card">
 <h3>📅 WOCHEN-TRACKER</h3>
 <div class="week" id="week"></div>
@@ -170,7 +164,6 @@ Status: <span id="beastStatus">Nicht aktiv</span><br>
 <div class="month" id="month"></div>
 </div>
 
-<!-- LOGS -->
 <div class="card">
 <h3>📜 XP-CHRONIK</h3>
 <div id="xpLog"></div>
@@ -181,13 +174,11 @@ Status: <span id="beastStatus">Nicht aktiv</span><br>
 <div id="systemLog"></div>
 </div>
 
-<!-- BADGES -->
 <div class="card">
 <h3>🏅 ERFOLGE</h3>
 <div id="badgesBox"></div>
 </div>
 
-<!-- PLAN / FOOD -->
 <div class="card">
 <h3>🏋️ TRAININGSPLAN</h3>
 <select id="planSelect" onchange="savePlan()">
@@ -209,12 +200,22 @@ Status: <span id="beastStatus">Nicht aktiv</span><br>
 </select>
 </div>
 
-<!-- LOGBOOK -->
 <div class="card">
 <h3>📓 LOGBUCH</h3>
 <textarea id="postText"></textarea>
 <button onclick="addPost()">Speichern</button>
 <div id="feed"></div>
+</div>
+
+<!-- 📦 BACKUP CARD (NEU) -->
+<div class="card">
+<h3>📦 BACKUP & WIEDERHERSTELLUNG</h3>
+<button onclick="exportData()">⬇️ Backup exportieren</button>
+<input type="file" id="importFile" accept=".json" style="margin-top:12px;">
+<button onclick="importData()">⬆️ Backup importieren</button>
+<p style="font-size:13px;opacity:0.8;margin-top:10px;">
+⚠️ Import überschreibt den aktuellen Zustand komplett.
+</p>
 </div>
 
 <button class="danger" onclick="resetAll()">⚠️ RESET</button>
@@ -223,221 +224,44 @@ Status: <span id="beastStatus">Nicht aktiv</span><br>
 <p class="footer">GYM-SPARTA · OFFLINE · MASTER CORE 🏛️</p>
 
 <script>
-/* ================= CORE STATE ================= */
-const MASTER_CODE="SPARTA-ELITE";
-const DEVICE_ID_KEY="sparta_device";
+/* ================= BACKUP SYSTEM ================= */
 
-let xp=+localStorage.getItem("xp")||0;
-let streak=+localStorage.getItem("streak")||0;
-let posts=JSON.parse(localStorage.getItem("feed"))||[];
-let badges=JSON.parse(localStorage.getItem("badges"))||[];
-let xpHistory=JSON.parse(localStorage.getItem("xpHistory"))||[];
-let systemHistory=JSON.parse(localStorage.getItem("systemHistory"))||[];
-let lastAction=localStorage.getItem("lastAction")||"–";
-let lastDay=localStorage.getItem("lastDay")||"–";
-let weekDays=JSON.parse(localStorage.getItem("weekDays"))||[0,0,0,0,0,0,0];
-let monthDays=JSON.parse(localStorage.getItem("monthDays"))||{};
-let beastDay=+localStorage.getItem("beastDay")||0;
-
-/* ================= RANK SYSTEM ================= */
-function getRank(){
-if(xp<100) return "Rekrut";
-if(xp<300) return "Hoplit";
-if(xp<600) return "Krieger";
-if(xp<1000) return "Veteran";
-return "Legende";
+function exportData(){
+const data={};
+for(let i=0;i<localStorage.length;i++){
+const key=localStorage.key(i);
+data[key]=localStorage.getItem(key);
+}
+const blob=new Blob([JSON.stringify({
+version:"GYM-SPARTA-MASTER",
+timestamp:new Date().toISOString(),
+data
+},null,2)],{type:"application/json"});
+const a=document.createElement("a");
+a.href=URL.createObjectURL(blob);
+a.download="gym-sparta-backup-"+new Date().toISOString().slice(0,10)+".json";
+a.click();
+logSystem("Backup exportiert");
 }
 
-/* ================= SPARTAN COACH ================= */
-const COACH_QUOTES=[
-"Disziplin schlägt Motivation. Jeden. Einzelnen. Tag.",
-"Sparta fragt nicht, ob du kannst. Sparta erwartet es.",
-"Schmerz ist der Preis für Ehre.",
-"Ein Satz mehr entscheidet Schlachten.",
-"Heute Eisen. Morgen Legende.",
-"Wer aussetzt, wird ersetzt.",
-"Dein Körper lügt. Dein Wille nicht."
-];
-
-function coachRules(){
-let warnings=[];
-if(weekDays.filter(d=>d===1).length===0) warnings.push("❌ Keine Einheit diese Woche.");
-if(posts.length===0) warnings.push("📓 Kein Logbuch. Kein Bewusstsein.");
-if(beastDay>0 && beastDay%5===0) warnings.push("🔥 Beast stabil. Kein Nachlassen.");
-if(streak>=7) warnings.push("⚔️ Sieben Tage Disziplin. Du wirst gefährlich.");
-if(streak===0) warnings.push("⚠️ Streak tot. Disziplin gebrochen.");
-return warnings;
-}
-
-function renderCoach(){
-coachQuote.textContent="🗡️ "+COACH_QUOTES[new Date().getDate()%COACH_QUOTES.length];
-let rules=coachRules();
-coachRule.textContent=rules.length?rules.join(" · "):"🧠 Coach beobachtet.";
-rules.forEach(r=>logSystem("Coach: "+r));
-}
-
-/* ================= SYSTEM ================= */
-function deviceID(){
-if(!localStorage.getItem(DEVICE_ID_KEY))
-localStorage.setItem(DEVICE_ID_KEY,Math.random().toString(36));
-return localStorage.getItem(DEVICE_ID_KEY);
-}
-
-function unlock(){
-if(accessCode.value!==MASTER_CODE) return alert("Falscher Code");
-localStorage.setItem("sparta_access",deviceID());
-localStorage.setItem("sparta_name",spartaName.value);
-start();
-}
-
-function start(){
-if(localStorage.getItem("sparta_access")!==deviceID()){
-deviceStatus.textContent="BLOCKIERT";
-deviceStatus.className="status-bad";
-return;
-}
-accessBox.classList.add("hidden");
-app.classList.remove("hidden");
-welcome.textContent="Willkommen, "+localStorage.getItem("sparta_name");
-dailyCheck();
-renderAll();
-}
-
-function dailyCheck(){
-const today=new Date().toLocaleDateString();
-if(lastDay!==today){
-streak++;
-lastDay=today;
-localStorage.setItem("lastDay",today);
-localStorage.setItem("streak",streak);
-logSystem("Neuer Tag · Streak aktualisiert");
-}
-}
-
-function logXP(amount,reason){
-xp+=amount;
-xpHistory.unshift(new Date().toLocaleString()+" · "+reason+" ("+amount+" XP)");
-localStorage.setItem("xpHistory",JSON.stringify(xpHistory));
-lastAction=reason;
-localStorage.setItem("lastAction",reason);
-}
-
-function logSystem(text){
-systemHistory.unshift(new Date().toLocaleString()+" · "+text);
-localStorage.setItem("systemHistory",JSON.stringify(systemHistory));
-}
-
-/* ================= ACTIONS ================= */
-function addPost(){
-if(!postText.value) return;
-posts.unshift("🗡️ "+postText.value+" ("+new Date().toLocaleTimeString()+")");
-logXP(5,"Logbuch");
-logSystem("Logbuch-Eintrag");
-postText.value="";
-save();
-}
-
-function savePlan(){
-localStorage.setItem("activePlan",planSelect.value);
-logSystem("Trainingsplan gesetzt");
-renderAll();
-}
-
-function saveFood(){
-localStorage.setItem("activeFood",foodSelect.value);
-logSystem("Ernährung gesetzt");
-renderAll();
-}
-
-function startBeast(){
-if(beastDay>0) return;
-beastDay=1;
-localStorage.setItem("beastDay",beastDay);
-logSystem("Beast Mode gestartet");
-renderAll();
-}
-
-function completeBeastDay(){
-if(!(bmTrain.checked&&bmFood.checked&&bmSleep.checked)) return alert("Alles abhaken!");
-logXP(30,"Beast Tag "+beastDay);
-beastDay++;
-localStorage.setItem("beastDay",beastDay);
-bmTrain.checked=bmFood.checked=bmSleep.checked=false;
-renderAll();
-}
-
-/* ================= RENDER ================= */
-function renderWeek(){
-week.innerHTML="";
-["Mo","Di","Mi","Do","Fr","Sa","So"].forEach((d,i)=>{
-let el=document.createElement("div");
-el.className="day"+(weekDays[i]?" done":"");
-el.textContent=d;
-el.onclick=()=>{
-weekDays[i]=weekDays[i]?0:1;
-logXP(10,"Training "+d);
-localStorage.setItem("weekDays",JSON.stringify(weekDays));
-renderAll();
-};
-week.appendChild(el);
-});
-}
-
-function renderMonth(){
-month.innerHTML="";
-let now=new Date();
-let days=new Date(now.getFullYear(),now.getMonth()+1,0).getDate();
-for(let i=1;i<=days;i++){
-let key=now.getFullYear()+"-"+now.getMonth()+"-"+i;
-let el=document.createElement("div");
-el.className="day"+(monthDays[key]?" done":"");
-el.textContent=i;
-el.onclick=()=>{
-monthDays[key]=!monthDays[key];
-localStorage.setItem("monthDays",JSON.stringify(monthDays));
-logXP(5,"Check-in "+i);
-renderAll();
-};
-month.appendChild(el);
-}
-}
-
-function renderAll(){
-renderCoach();
-level.textContent=Math.floor(xp/100)+1;
-xpSpan.textContent=xp;
-streakSpan.textContent=streak;
-lastActionSpan.textContent=lastAction;
-activePlan.textContent=localStorage.getItem("activePlan")||"–";
-activeFood.textContent=localStorage.getItem("activeFood")||"–";
-lastDaySpan.textContent=lastDay;
-rankText.textContent=getRank();
-rankBox.textContent="RANG: "+getRank();
-beastStatus.textContent=beastDay>0?"Tag "+beastDay+"/30":"Nicht aktiv";
-beastBox.classList.toggle("hidden",beastDay===0);
-renderWeek(); renderMonth(); renderFeed(); renderBadges(); renderXPLog(); renderSystemLog();
-}
-
-function renderFeed(){feed.innerHTML="";posts.forEach(p=>{let d=document.createElement("div");d.textContent=p;feed.appendChild(d);});}
-function renderBadges(){badgesBox.innerHTML="";badges.forEach(b=>{let d=document.createElement("div");d.textContent=b;badgesBox.appendChild(d);});}
-function renderXPLog(){xpLog.innerHTML="";xpHistory.forEach(x=>{let d=document.createElement("div");d.textContent=x;xpLog.appendChild(d);});}
-function renderSystemLog(){systemLog.innerHTML="";systemHistory.forEach(s=>{let d=document.createElement("div");d.textContent=s;systemLog.appendChild(d);});}
-
-function save(){
-localStorage.setItem("xp",xp);
-localStorage.setItem("feed",JSON.stringify(posts));
-renderAll();
-}
-
-function resetAll(){
-if(confirm("ALLES LÖSCHEN?")){
+function importData(){
+const file=document.getElementById("importFile").files[0];
+if(!file) return alert("Keine Datei gewählt");
+if(!confirm("⚠️ ALLE aktuellen Daten werden überschrieben. Fortfahren?")) return;
+const reader=new FileReader();
+reader.onload=e=>{
+try{
+const json=JSON.parse(e.target.result);
+if(!json.data) throw "Ungültiges Backup";
 localStorage.clear();
+Object.keys(json.data).forEach(k=>localStorage.setItem(k,json.data[k]));
 location.reload();
+}catch(err){
+alert("❌ Backup beschädigt oder inkompatibel");
 }
+};
+reader.readAsText(file);
 }
-
-if(localStorage.getItem("sparta_access")===deviceID()) start();
-else accessBox.classList.remove("hidden");
 </script>
 
 </body>
