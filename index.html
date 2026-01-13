@@ -6,23 +6,74 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <link rel="apple-touch-icon" href="logo.png.PNG">
-<meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="theme-color" content="#000000">
 
 <style>
-body{margin:0;padding:20px;background:#000;color:#fff;font-family:Arial,sans-serif;text-align:center}
-h1,h2,h3{color:gold}
-.logo{max-width:240px;width:80%;margin:20px auto;display:block}
-.card{border:2px solid gold;border-radius:16px;padding:18px;margin:16px auto;max-width:700px;text-align:left}
-button{width:100%;padding:14px;background:gold;color:#000;border:none;border-radius:12px;font-size:18px;font-weight:bold;margin-top:10px}
-input,select,textarea{width:100%;padding:12px;border-radius:10px;border:none;margin-top:8px;font-size:16px}
-.week{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;margin-top:10px}
-.day{border:1px solid gold;border-radius:8px;padding:10px;font-size:12px;cursor:pointer;text-align:center}
-.day.done{background:gold;color:#000;font-weight:bold}
-.feedPost{border-bottom:1px solid gold;padding:8px 0}
+:root{
+--gold:#d4af37;
+--dark:#000;
+--card:#111;
+}
+body{
+margin:0;
+padding:20px;
+background:var(--dark);
+color:#fff;
+font-family:Arial,Helvetica,sans-serif;
+text-align:center;
+}
+h1,h2,h3{color:var(--gold);}
+.logo{width:85%;max-width:260px;margin:20px auto;display:block}
+.card{
+background:var(--card);
+border:2px solid var(--gold);
+border-radius:18px;
+padding:18px;
+margin:18px auto;
+max-width:720px;
+text-align:left;
+}
+button{
+width:100%;
+padding:14px;
+margin-top:10px;
+background:var(--gold);
+color:#000;
+border:none;
+border-radius:12px;
+font-size:17px;
+font-weight:bold;
+cursor:pointer;
+}
+input,select,textarea{
+width:100%;
+padding:12px;
+margin-top:8px;
+border-radius:10px;
+border:none;
+font-size:16px;
+}
 .hidden{display:none}
-.link{color:gold;text-align:center;cursor:pointer;margin-top:10px}
-.footer{color:gold;margin-top:30px;font-weight:bold}
+.week{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;margin-top:10px}
+.day{
+border:1px solid var(--gold);
+border-radius:8px;
+padding:10px;
+font-size:12px;
+cursor:pointer;
+text-align:center;
+}
+.day.done{
+background:var(--gold);
+color:#000;
+font-weight:bold;
+}
+.feedPost{
+border-bottom:1px solid var(--gold);
+padding:6px 0;
+}
+.link{color:var(--gold);text-align:center;cursor:pointer;margin-top:10px}
+.footer{color:var(--gold);margin:30px 0;font-weight:bold}
 </style>
 </head>
 
@@ -60,71 +111,65 @@ input,select,textarea{width:100%;padding:12px;border-radius:10px;border:none;mar
 <h2 id="welcome"></h2>
 
 <div class="card">
-<strong>📜 Spartan Codex</strong><br><br>
+<strong>📜 SPARTAN CODEX</strong><br><br>
 Disziplin schlägt Motivation.<br>
-Training + Essen = Fortschritt.<br>
-Konstanz entscheidet.
+Essen ist Training.<br>
+Konstanz ist alles.
 </div>
 
-<!-- PROFIL -->
 <div class="card">
-<strong>👤 Profil</strong><br><br>
+<strong>👤 PROFIL</strong><br>
 Level: <span id="level">1</span><br>
 XP: <span id="xp">0</span><br>
-🔥 Streak: <span id="streak">0</span> Tage
+🔥 Streak: <span id="streak">0</span>
 </div>
 
-<!-- TRAINING PLAN -->
 <div class="card">
-<h3>🏋️ Trainingsplan wählen</h3>
+<h3>🏋️ TRAININGSPLAN</h3>
 <select id="planSelect" onchange="savePlan()">
 <option value="">– auswählen –</option>
 <option value="6">6 Tage ALL-IN</option>
-<option value="4">4 Tage Spartan Bodybuilding</option>
-<option value="3">3 Tage Split</option>
+<option value="4">4 Tage Spartan Split</option>
+<option value="3">3 Tage Spartan Split</option>
 </select>
 </div>
 
 <div class="card hidden" id="planInfo"></div>
 
-<!-- WEEK TRACKER -->
 <div class="card hidden" id="trackerBox">
 <h3>📅 Wochen-Tracker</h3>
 <div class="week" id="week"></div>
 </div>
 
-<!-- ERNÄHRUNG -->
 <div class="card">
-<h3>🥗 Ernährungsphase</h3>
+<h3>🥗 ERNÄHRUNG</h3>
 <select id="nutritionSelect" onchange="saveNutrition()">
 <option value="">– auswählen –</option>
-<option value="bulk">Masse / Bulk</option>
+<option value="bulk">Masse</option>
 <option value="lean">Lean Bulk</option>
-<option value="diet">Diät – stark bleiben</option>
+<option value="diet">Diät</option>
 <option value="hardcore">Hardcore Sparta</option>
 </select>
 </div>
 
 <div class="card hidden" id="nutritionInfo"></div>
 
-<!-- COMMUNITY -->
 <div class="card">
-<h3>👥 Spartan Wall</h3>
+<h3>👥 SPARTAN WALL</h3>
 <textarea id="postText" placeholder="Was hast du heute zerstört?"></textarea>
 <button onclick="addPost()">Posten</button>
 <div id="feed"></div>
 </div>
 
-<!-- LEADERBOARD -->
 <div class="card">
-<h3>🏆 Spartan Leaderboard</h3>
+<h3>🏆 LEADERBOARD</h3>
 <div id="leaderboard"></div>
 </div>
 
 <button onclick="logout()">Logout</button>
 </div>
 
-<p class="footer">Auuu 💪 Gym-Sparta 13.0</p>
+<p class="footer">GYM-SPARTA · MASTER BUILD 🏛️</p>
 
 <script>
 /* ====== DATEN ====== */
@@ -134,9 +179,9 @@ let days=JSON.parse(localStorage.getItem("week"))||[0,0,0,0,0,0,0];
 let posts=JSON.parse(localStorage.getItem("feed"))||[];
 
 const plans={
-6:`<b>6 Tage ALL-IN</b><br>Mo Brust · Di Beine · Mi Arme · Do Rücken · Fr Brust/Schulter · Sa Pause · So Schulter/Nacken`,
-4:`<b>4 Tage Spartan Bodybuilding</b><br>OK schwer · UK schwer · Pause · OK Volumen · UK Volumen`,
-3:`<b>3 Tage Split</b><br>Oberkörper · Unterkörper · Push/Pull`
+6:"Mo Brust · Di Beine · Mi Arme · Do Rücken · Fr Brust/Schulter · Sa Pause · So Schulter/Nacken",
+4:"OK schwer · UK schwer · Pause · OK Volumen · UK Volumen",
+3:"Oberkörper · Unterkörper · Push/Pull"
 };
 
 const nutrition={
@@ -151,80 +196,96 @@ function showRegister(){loginBox.classList.add("hidden");registerBox.classList.r
 function showLogin(){registerBox.classList.add("hidden");loginBox.classList.remove("hidden")}
 
 function register(){
-  if(!regName.value||!regPass.value)return alert("Alles ausfüllen");
-  localStorage.setItem("spartanUser",JSON.stringify({name:regName.value,pass:regPass.value,title:regTitle.value}));
-  showLogin();
+if(!regName.value||!regPass.value)return alert("Alles ausfüllen");
+localStorage.setItem("spartanUser",JSON.stringify({
+name:regName.value,pass:regPass.value,title:regTitle.value
+}));
+showLogin();
 }
+
 function login(){
-  const u=JSON.parse(localStorage.getItem("spartanUser"));
-  if(!u||loginName.value!==u.name||loginPass.value!==u.pass)return alert("Falsche Daten");
-  start(u);
+const u=JSON.parse(localStorage.getItem("spartanUser"));
+if(!u||loginName.value!==u.name||loginPass.value!==u.pass)
+return alert("Falsche Daten");
+start(u);
 }
+
 function start(u){
-  loginBox.classList.add("hidden");
-  registerBox.classList.add("hidden");
-  app.classList.remove("hidden");
-  welcome.textContent=`Willkommen ${u.title} ${u.name} 🏛️`;
-  if(localStorage.getItem("plan")){planSelect.value=localStorage.getItem("plan");renderPlan(planSelect.value)}
-  if(localStorage.getItem("nutrition")){nutritionSelect.value=localStorage.getItem("nutrition");renderNutrition(nutritionSelect.value)}
-  renderWeek();renderFeed();updateProfile();renderLeaderboard();
+loginBox.classList.add("hidden");
+registerBox.classList.add("hidden");
+app.classList.remove("hidden");
+welcome.textContent=`Willkommen ${u.title} ${u.name} 🏛️`;
+if(localStorage.getItem("plan")){planSelect.value=localStorage.getItem("plan");renderPlan(planSelect.value)}
+if(localStorage.getItem("nutrition")){nutritionSelect.value=localStorage.getItem("nutrition");renderNutrition(nutritionSelect.value)}
+renderWeek();renderFeed();updateProfile();renderLeaderboard();
 }
+
 function logout(){location.reload()}
 
 /* ====== TRAINING ====== */
 function savePlan(){localStorage.setItem("plan",planSelect.value);renderPlan(planSelect.value)}
-function renderPlan(p){planInfo.innerHTML=plans[p];planInfo.classList.remove("hidden");trackerBox.classList.remove("hidden")}
+function renderPlan(p){
+planInfo.innerHTML="<strong>Plan:</strong><br>"+plans[p];
+planInfo.classList.remove("hidden");
+trackerBox.classList.remove("hidden");
+}
 
 function renderWeek(){
-  week.innerHTML="";
-  ["Mo","Di","Mi","Do","Fr","Sa","So"].forEach((d,i)=>{
-    const el=document.createElement("div");
-    el.className="day"+(days[i]?" done":"");
-    el.textContent=d;
-    el.onclick=()=>{
-      days[i]=days[i]?0:1;
-      xp+=days[i]?10:-10;
-      streak=days[i]?streak+1:0;
-      localStorage.setItem("xp",xp);
-      localStorage.setItem("streak",streak);
-      localStorage.setItem("week",JSON.stringify(days));
-      updateProfile();renderWeek();
-    };
-    week.appendChild(el);
-  });
+week.innerHTML="";
+["Mo","Di","Mi","Do","Fr","Sa","So"].forEach((d,i)=>{
+const el=document.createElement("div");
+el.className="day"+(days[i]?" done":"");
+el.textContent=d;
+el.onclick=()=>{
+days[i]=days[i]?0:1;
+xp+=days[i]?10:-10;
+streak=days[i]?streak+1:0;
+localStorage.setItem("xp",xp);
+localStorage.setItem("streak",streak);
+localStorage.setItem("week",JSON.stringify(days));
+updateProfile();renderWeek();
+};
+week.appendChild(el);
+});
 }
 
 /* ====== ERNÄHRUNG ====== */
-function saveNutrition(){localStorage.setItem("nutrition",nutritionSelect.value);renderNutrition(nutritionSelect.value)}
-function renderNutrition(n){nutritionInfo.innerHTML=nutrition[n];nutritionInfo.classList.remove("hidden")}
+function saveNutrition(){
+localStorage.setItem("nutrition",nutritionSelect.value);
+renderNutrition(nutritionSelect.value);
+}
+function renderNutrition(n){
+nutritionInfo.innerHTML=nutrition[n];
+nutritionInfo.classList.remove("hidden");
+}
 
 /* ====== COMMUNITY ====== */
 function addPost(){
-  if(!postText.value)return;
-  posts.unshift(postText.value);
-  localStorage.setItem("feed",JSON.stringify(posts));
-  postText.value="";
-  renderFeed();
+if(!postText.value)return;
+posts.unshift(postText.value);
+localStorage.setItem("feed",JSON.stringify(posts));
+postText.value="";
+renderFeed();
 }
 function renderFeed(){
-  feed.innerHTML="";
-  posts.forEach(p=>{
-    const d=document.createElement("div");
-    d.className="feedPost";
-    d.textContent=p;
-    feed.appendChild(d);
-  });
+feed.innerHTML="";
+posts.forEach(p=>{
+const d=document.createElement("div");
+d.className="feedPost";
+d.textContent=p;
+feed.appendChild(d);
+});
 }
 
-/* ====== PROFIL & LEADERBOARD ====== */
+/* ====== PROFIL ====== */
 function updateProfile(){
-  level.textContent=Math.floor(xp/100)+1;
-  document.getElementById("xp").textContent=xp;
-  document.getElementById("streak").textContent=streak;
+level.textContent=Math.floor(xp/100)+1;
+document.getElementById("xp").textContent=xp;
+document.getElementById("streak").textContent=streak;
 }
 function renderLeaderboard(){
-  leaderboard.innerHTML=
-    "🥇 Leonidas – 1200 XP<br>🥈 Ares – 900 XP<br>🥉 SpartanX – 700 XP<br><b>Du:</b> "+xp+" XP";
+leaderboard.innerHTML=
+"🥇 Leonidas – 1200 XP<br>🥈 Ares – 900 XP<br>🥉 SpartanX – 700 XP<br><b>Du:</b> "+xp+" XP";
 }
 
 const saved=JSON.parse(localStorage.getItem("spartanUser"));
