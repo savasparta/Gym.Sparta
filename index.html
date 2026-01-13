@@ -2,7 +2,7 @@
 <html lang="de">
 <head>
 <meta charset="UTF-8">
-<title>GYM SPARTA – WELTHERRSCHAFT</title>
+<title>GYM SPARTA – BRUTAL REALITY</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <link rel="apple-touch-icon" href="logo.png.PNG">
@@ -10,22 +10,37 @@
 <meta name="theme-color" content="#000000">
 
 <style>
-body{background:#000;color:#fff;font-family:Arial,sans-serif;padding:20px;text-align:center}
-body.beast{background:#1a0000}
-h1,h2,h3{color:gold}
+body{
+  background:#000;color:#fff;font-family:Arial,sans-serif;
+  padding:20px;text-align:center
+}
+body.fail{background:#300000}
+h1,h2{color:gold}
 .logo{max-width:260px;width:80%;margin:20px auto;display:block}
-.card{border:2px solid gold;border-radius:14px;padding:16px;margin:14px 0;text-align:left}
-button{width:100%;padding:14px;background:gold;color:#000;border:none;border-radius:12px;font-size:18px;font-weight:bold;margin-top:10px}
-input,select{width:100%;padding:10px;border-radius:8px;border:none;margin-top:6px}
-input[type=checkbox]{transform:scale(1.4);margin-right:10px;width:auto}
+.card{
+  border:2px solid gold;border-radius:14px;
+  padding:16px;margin:14px 0;text-align:left
+}
+button{
+  width:100%;padding:14px;background:gold;color:#000;
+  border:none;border-radius:12px;font-size:18px;
+  font-weight:bold;margin-top:10px
+}
+input[type=checkbox]{transform:scale(1.4);margin-right:10px}
+input,select,textarea{
+  width:100%;padding:10px;border-radius:8px;
+  border:none;margin-top:6px
+}
+.progress{
+  height:20px;background:#222;border-radius:10px;margin:10px 0
+}
+.bar{
+  height:100%;background:gold;width:0%;border-radius:10px
+}
 .hidden{display:none}
-.progress-box{border:2px solid gold;border-radius:12px;padding:10px;margin:20px 0}
-.progress-bar{height:20px;background:gold;width:0%;border-radius:10px}
-.calendar{display:grid;grid-template-columns:repeat(7,1fr);gap:6px}
-.day{border:1px solid gold;border-radius:8px;padding:8px;font-size:12px}
-.day.done{background:gold;color:#000}
-.badge{border:2px solid gold;border-radius:10px;padding:10px;margin:6px 0;text-align:center}
-.quote{font-style:italic;color:gold;margin:15px 0}
+.alert{
+  color:red;font-weight:bold;text-align:center;margin:15px 0
+}
 .footer{color:gold;margin-top:30px;font-weight:bold}
 </style>
 </head>
@@ -33,191 +48,92 @@ input[type=checkbox]{transform:scale(1.4);margin-right:10px;width:auto}
 <body>
 
 <img src="logo.png.PNG" class="logo">
-<h1>🌍 GYM SPARTA – WELTHERRSCHAFT 🌍</h1>
+<h1>☠️ GYM SPARTA – BRUTAL REALITY ☠️</h1>
 
-<div class="quote" id="quote"></div>
-
-<!-- PROFIL -->
-<div class="card" id="profileBox">
-<strong>👤 Spartan Identität</strong><br><br>
-Name:
-<input id="nameInput" placeholder="Dein Name">
-Titel:
-<select id="titleInput">
-<option>Rekrut</option>
-<option>Krieger</option>
-<option>Elite</option>
-<option>Legende</option>
-<option>Imperator</option>
-</select>
-<button onclick="saveProfile()">IDENTITÄT FESTLEGEN</button>
-</div>
-
-<div id="app" class="hidden">
-
-<button onclick="toggleBeast()" id="beastBtn">🔥 KRIEGSMODUS</button>
-
-<h2>🔥 Daily Missionen</h2>
-<label class="card"><input type="checkbox" class="task"> Training abgeschlossen</label>
-<label class="card"><input type="checkbox" class="task"> Protein-Ziel erreicht</label>
-<label class="card"><input type="checkbox" class="task"> Mental stark geblieben</label>
-<label class="card"><input type="checkbox" class="task"> Kein Bullshit gegessen</label>
-
-<div class="progress-box">
-<div class="progress-bar" id="progress"></div>
-</div>
-
-<div><strong>👑 Rang:</strong> <span id="rank"></span></div>
-<div><strong>🔥 Streak:</strong> <span id="streak">0</span> Tage</div>
-<div><strong>⚔️ Imperium-Punkte:</strong> <span id="ip">0</span></div>
-
-<button onclick="newDay()">🔁 Tag abschließen</button>
-
-<h2>⚔️ 7-Tage-Krieg</h2>
-<div class="calendar" id="calendar"></div>
-
-<h2>🌍 Welt-Rang (Simulation)</h2>
-<div class="card" id="worldRank"></div>
-
-<h2>🥗 Ernährung PRO</h2>
 <div class="card">
-<strong>BULK:</strong> Eier · Hafer · Reis · Fleisch · Quark<br><br>
-<strong>CUT:</strong> Skyr · Gemüse · Fisch · Shake<br><br>
-<strong>HARDCORE:</strong> Fleisch · Eier · Wasser · Salz
+<strong>Spartan Gesetz:</strong><br>
+Wenn du versagst, lügst du nicht.<br>
+Du zahlst.
 </div>
 
-<h2>📜 Spartan Codex</h2>
-<div class="card">
-• Keine Ausreden<br>
-• Stärke ist Pflicht<br>
-• Disziplin > Motivation<br>
-• Dein Körper ist dein Tempel<br>
-• Schwäche wird besiegt
+<h2>🔥 Tagespflichten</h2>
+<label class="card"><input type="checkbox" class="task"> Training brutal durchgezogen</label>
+<label class="card"><input type="checkbox" class="task"> Ernährung 100% eingehalten</label>
+<label class="card"><input type="checkbox" class="task"> Kein Bullshit, keine Ausreden</label>
+<label class="card"><input type="checkbox" class="task"> Geist stärker als Körper</label>
+
+<div class="progress">
+  <div class="bar" id="bar"></div>
 </div>
 
-<h2>🏆 Erfolge</h2>
-<div id="badges"></div>
+<div><strong>🔥 Pain Score:</strong> <span id="pain">0</span>/10</div>
+<input type="range" min="0" max="10" id="painInput">
 
+<div><strong>☠️ Death Count:</strong> <span id="deaths">0</span></div>
+
+<div class="alert hidden" id="alert">
+DU HAST HEUTE VERSAGT.<br>
+SPARTA VERGISST NICHT.
 </div>
 
-<p class="footer">Auuu! 💪 Gym-Sparta 8.0 – Weltherrschaft</p>
+<h2>⚔️ Brutale Wahrheit</h2>
+<textarea id="truth" placeholder="Warum warst du heute schwach?"></textarea>
+
+<button onclick="judge()">⚖️ SPARTAN JUDGE</button>
+<button onclick="endDay()">☠️ TAG ABSCHLIESSEN</button>
+
+<p class="footer">Auuu. 💀 Gym-Sparta 9.0</p>
 
 <script>
-const quotesN=[
-"Disziplin schlägt Motivation.",
-"Spartaner handeln.",
-"Stärke entscheidet."
-];
-const quotesB=[
-"KRIEG.",
-"DOMINANZ.",
-"KEINE GNADE."
-];
-
 const tasks=[...document.querySelectorAll('.task')];
-const progress=document.getElementById('progress');
-const rankEl=document.getElementById('rank');
-const streakEl=document.getElementById('streak');
-const ipEl=document.getElementById('ip');
-const calendar=document.getElementById('calendar');
-const worldRank=document.getElementById('worldRank');
-const badgesEl=document.getElementById('badges');
+const bar=document.getElementById('bar');
+const painInput=document.getElementById('painInput');
+const painEl=document.getElementById('pain');
+const deathsEl=document.getElementById('deaths');
+const alertBox=document.getElementById('alert');
+const truth=document.getElementById('truth');
 
-let xp=+localStorage.getItem('xp')||0;
-let ip=+localStorage.getItem('ip')||0;
-let streak=+localStorage.getItem('streak')||0;
-let beast=localStorage.getItem('beast')==='true';
-let war=JSON.parse(localStorage.getItem('war'))||[0,0,0,0,0,0,0];
+let deaths=+localStorage.getItem('deaths')||0;
 
-function rank(x){
-  if(x<150) return "Rekrut";
-  if(x<400) return "Krieger";
-  if(x<800) return "Elite";
-  if(x<1500) return "Legende";
-  return "IMPERATOR";
-}
+painInput.oninput=()=>painEl.textContent=painInput.value;
+
+tasks.forEach(t=>t.addEventListener('change',update));
 
 function update(){
   const done=tasks.filter(t=>t.checked).length;
-  progress.style.width=(done/tasks.length*100)+"%";
-  rankEl.textContent=rank(xp);
-  streakEl.textContent=streak;
-  ipEl.textContent=ip;
-  renderCalendar();
-  renderWorldRank();
-  renderBadges();
+  bar.style.width=(done/tasks.length*100)+"%";
 }
 
-tasks.forEach(t=>t.addEventListener('change',()=>{
-  if(t.checked){
-    xp+=beast?20:10;
-    ip+=beast?8:4;
+function judge(){
+  if(truth.value.length<20){
+    alert("LÜGE. SCHREIB DIE WAHRHEIT.");
+    return;
   }
-  localStorage.setItem('xp',xp);
-  localStorage.setItem('ip',ip);
-  update();
-}));
+  alert("URTEIL GESPEICHERT. VERGISS ES NICHT.");
+}
 
-function newDay(){
+function endDay(){
   const perfect=tasks.every(t=>t.checked);
-  if(perfect){streak++;ip+=15}else streak=0;
-  war.shift(); war.push(perfect?1:0);
-  localStorage.setItem('streak',streak);
-  localStorage.setItem('war',JSON.stringify(war));
+  if(!perfect){
+    deaths++;
+    document.body.classList.add('fail');
+    alertBox.classList.remove('hidden');
+  }else{
+    document.body.classList.remove('fail');
+    alertBox.classList.add('hidden');
+  }
+  localStorage.setItem('deaths',deaths);
+  deathsEl.textContent=deaths;
+
   tasks.forEach(t=>t.checked=false);
+  truth.value="";
+  painInput.value=0;
+  painEl.textContent=0;
   update();
 }
 
-function renderCalendar(){
-  calendar.innerHTML="";
-  ["1","2","3","4","5","6","7"].forEach((d,i)=>{
-    const el=document.createElement('div');
-    el.className='day'+(war[i]?' done':'');
-    el.textContent="Tag "+d;
-    calendar.appendChild(el);
-  });
-}
-
-function renderWorldRank(){
-  const worldXP=1200+Math.floor(Math.random()*600);
-  worldRank.innerHTML=
-    "🌍 Weltrang: Platz <strong>"+(worldXP>xp?Math.floor(Math.random()*500+50):Math.floor(Math.random()*20+1))+
-    "</strong><br>Welt-Imperator XP: "+worldXP;
-}
-
-function renderBadges(){
-  badgesEl.innerHTML="";
-  if(streak>=7) badgesEl.innerHTML+='<div class="badge">🏅 7-Tage-Krieger</div>';
-  if(streak>=30) badgesEl.innerHTML+='<div class="badge">🏅 30-Tage-Elite</div>';
-  if(streak>=100) badgesEl.innerHTML+='<div class="badge">🏅 IMPERATOR</div>';
-}
-
-function toggleBeast(){
-  beast=!beast;
-  localStorage.setItem('beast',beast);
-  document.body.classList.toggle('beast',beast);
-  randomQuote();
-}
-
-function randomQuote(){
-  const a=beast?quotesB:quotesN;
-  document.getElementById('quote').textContent=
-    a[Math.floor(Math.random()*a.length)];
-}
-
-function saveProfile(){
-  localStorage.setItem('name',nameInput.value);
-  localStorage.setItem('title',titleInput.value);
-  document.getElementById('profileBox').style.display='none';
-  document.getElementById('app').classList.remove('hidden');
-}
-
-if(localStorage.getItem('name')){
-  document.getElementById('profileBox').style.display='none';
-  document.getElementById('app').classList.remove('hidden');
-}
-
-randomQuote(); update();
+deathsEl.textContent=deaths;
+update();
 </script>
 
 </body>
